@@ -23,6 +23,6 @@
   ```
 
 3. In VSCode, install extensions "Extension Pack for Java" and "Spring Boot Extension Pack."
-4. Set VSCode settings "Java > Home" to your java executable's directory (e.g. `C:\Program Files\Java\jdk-17\`).
+4. Set VSCode settings "Java > Jdt > Ls > Java: Home" to your java executable's directory (e.g. `c:\\Program Files\\Java\\jdk-17`, **Windows require escaped backslash characters!**).
 5. Set environment variable `JAVA_HOME` to your Java directory folder, e.g. `C:\Program Files\Java\jdk-17`.
 6. **While you are in the main Java file `IplannerApplication.java`**, click `F5` to run.
