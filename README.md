@@ -1,6 +1,6 @@
 # iPlanner
 
-## Backend Environment Setup
+## Backend Dev Environment Setup
 
 1. Download and install [JDK 17 Installer](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).
 2. Install Maven:
@@ -27,3 +27,16 @@
 * For Windows, the directoy will be something like `c:\\Program Files\\Java\\jdk-17`, **make sure to use escaped backslash characters!**.
 * For MacOS, get the directory by running `/usr/libexec/java_home -v 17` in your terminal.
 5. **While you are in the main Java file `IplannerApplication.java`**, click `F5` to run.
+
+## Frontend Dev Environment Setup
+
+1. Install [Node.js](https://nodejs.org/en/download/).
+2. Install `yarn` via `npm`:
+   ```sh
+   npm install --global yarn
+   ```
+3. Start the frontend server:
+   ```sh
+   cd frontend/
+   yarn start
+   ```
