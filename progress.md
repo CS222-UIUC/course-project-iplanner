@@ -8,7 +8,7 @@
   - Brief spring overview with Encheng and Zihao
   - Read React basic tutorials
 - **Anant**
-  - *fill in here*
+  - I've begun reinforcing my knowledge of typescript syntax. In addition, I've set up the necessary resources and software for developing the front end such as Node.js. Further, I am familiarizing myself with the react framework since I’m responsible for partially implementing the product’s UI. Also have reviewed and merged the pull request for the frontend base project.
 
 **Backend**
 - **Encheng**
