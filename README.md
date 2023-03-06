@@ -40,3 +40,33 @@
    cd frontend/
    yarn start
    ```
+
+## Database Setup
+
+**Read all instructions before you start.**
+
+### MySQL Installation
+
+1. Go to [MySQL's official website](https://dev.mysql.com/downloads/).
+- If Windows: click **MySQL Installer for Windows** and download. When prompted, select **Setup Type > Developer Default**. If "MySQL for Visual Studio" gives a failing requirement error, click "Next > Continue" and ignore this particular installation. If any installation fails, click "Retry All".
+- If MacOS: download **Workbench**, **Community Server**, **Router**, **Shell** and install.
+2. After installation, you need to configure your MySQL server. Click "Next" through, and set a password for the `root` user when prompted.
+3. Start the MySQL Workbench. You should already see a "Local instance MySQL80" under "MySQL Connections". Click on the instance, enter your password, and tick "Save password in vault".
+4. If all is good you should see the database. On the middle left, select "Navigator > Schemas".
+
+### Springboot JPA Configuration
+
+1. Create `application-dev.properties` in directory `backend/src/main/resources` (i.e. the same directory as `application.properties`). This file is `.gitignore`'d from the project and contains local development environment information.
+2. Copy-paste the following configuration into the newly created file, and change `<mysql-password>` to your MySQL local password:
+   ```
+   spring.datasource.url = jdbc:mysql://127.0.0.1:3306/iplanner?characterEncoding=UTF-8&serverTimezone=GMT%2D6
+   spring.datasource.username = root
+   spring.datasource.password = <mysql-password>
+   spring.datasource.driver-class-name = com.mysql.jdbc.Driver
+   spring.jpa.properties.hibernate.hdm2ddl.auto = update
+
+   spring.jpa.show-sql = true
+   spring.jpa.properties.hibernate.format_sql = true
+   ```
+3. In VSCode, reload your Java Project by "View > Command Palette" (in Windows `Ctrl+Shift+P`), search for "Java > Clean Java Language Server Workspace", hit Enter, and click "Reload and Delete" on the bottom-right pop-up.
+4. Open `IplannerApplication.java` and hit `Debug`. If everything is configured the backend should start successfully.
