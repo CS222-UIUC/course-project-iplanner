@@ -52,7 +52,7 @@
 - If MacOS: download **Workbench**, **Community Server**, **Router**, **Shell** and install.
 2. After installation, you need to configure your MySQL server. Click "Next" through, and set a password for the `root` user when prompted.
 3. Start the MySQL Workbench. You should already see a "Local instance MySQL80" under "MySQL Connections". Click on the instance, enter your password, and tick "Save password in vault".
-4. If all is good you should see the database. On the middle left, select "Navigator > Schemas".
+4. If all is good you should see the database. On the middle left, at the blank spaces in "Schema", right click and select "Create schema". Create a schema called `iplanner`, **all lowercase**.
 
 ### Springboot JPA Configuration
 
