@@ -70,3 +70,11 @@
    ```
 3. In VSCode, reload your Java Project by "View > Command Palette" (in Windows `Ctrl+Shift+P`), search for "Java > Clean Java Language Server Workspace", hit Enter, and click "Reload and Delete" on the bottom-right pop-up.
 4. Open `IplannerApplication.java` and hit `Debug`. If everything is configured the backend should start successfully.
+
+### Import Database from SQL file
+
+1. In MySQL, select "Server > Data Import".
+2. Tick "Import from Self-Contained File" and select the target SQL file in `/backend/sql`.
+3. Select "Default Target Schema" to `iplanner`.
+4. Select "Dump Structure and Data" (or data/structure only, on need).
+5. Click "Start Import".
