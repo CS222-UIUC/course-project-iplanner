@@ -52,7 +52,7 @@
 - If MacOS: download **Workbench**, **Community Server**, **Router**, **Shell** and install.
 2. After installation, you need to configure your MySQL server. Click "Next" through, and set a password for the `root` user when prompted.
 3. Start the MySQL Workbench. You should already see a "Local instance MySQL80" under "MySQL Connections". Click on the instance, enter your password, and tick "Save password in vault".
-4. If all is good you should see the database. On the middle left, select "Navigator > Schemas".
+4. If all is good you should see the database. On the middle left, at the blank spaces in "Schema", right click and select "Create schema". Create a schema called `iplanner`, **all lowercase**.
 
 ### Springboot JPA Configuration
 
@@ -70,3 +70,11 @@
    ```
 3. In VSCode, reload your Java Project by "View > Command Palette" (in Windows `Ctrl+Shift+P`), search for "Java > Clean Java Language Server Workspace", hit Enter, and click "Reload and Delete" on the bottom-right pop-up.
 4. Open `IplannerApplication.java` and hit `Debug`. If everything is configured the backend should start successfully.
+
+### Import Database from SQL file
+
+1. In MySQL, select "Server > Data Import".
+2. Tick "Import from Self-Contained File" and select the target SQL file in `/backend/sql`.
+3. Select "Default Target Schema" to `iplanner`.
+4. Select "Dump Structure and Data" (or data/structure only, on need).
+5. Click "Start Import".
