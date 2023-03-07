@@ -1,0 +1,49 @@
+[ {
+  "subject" : "MATH",
+  "number" : "357",
+  "title" : "Numerical Methods I",
+  "credit" : "3 hours.",
+  "info" : "Same as CS 357. See CS 357."
+}, {
+  "subject" : "CS",
+  "number" : "233",
+  "title" : "Computer Architecture",
+  "credit" : "4 hours.",
+  "info" : "Prerequisite: CS 125 or CS 128; CS 173 or MATH 213; credit or concurrent enrollment in CS 225."
+}, {
+  "subject" : "CS",
+  "number" : "124",
+  "title" : "Introduction to Computer Science I",
+  "credit" : "3 hours.",
+  "info" : "Credit is not given for both CS 124 and CS 125. Prerequisite: Three years of high school mathematics or MATH 112."
+}, {
+  "subject" : "CS",
+  "number" : "341",
+  "title" : "System Programming",
+  "credit" : "4 hours.",
+  "info" : "Credit is not given for both CS 341 and either CS 241 or ECE 391. Prerequisite: CS 225 and CS 233."
+}, {
+  "subject" : "CS",
+  "number" : "374",
+  "title" : "Introduction to Algorithms &amp; Models of Computation",
+  "credit" : "4 hours.",
+  "info" : "Same as ECE 374. Prerequisite: One of CS 173, MATH 213; CS 225."
+}, {
+  "subject" : "ECE",
+  "number" : "385",
+  "title" : "Digital Systems Laboratory",
+  "credit" : "3 hours.",
+  "info" : "Prerequisite: ECE 110 and ECE 220."
+}, {
+  "subject" : "ECE",
+  "number" : "391",
+  "title" : "Computer Systems Engineering",
+  "credit" : "4 hours.",
+  "info" : "Credit is not given for both ECE 391 and either CS 341 or CS 241. Prerequisite: ECE 220 or CS 233."
+}, {
+  "subject" : "MATH",
+  "number" : "241",
+  "title" : "Calculus III",
+  "credit" : "4 hours.",
+  "info" : "Credit is not given for both MATH 241 and MATH 292. Prerequisite: MATH 231."
+} ]

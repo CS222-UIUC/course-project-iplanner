@@ -1,0 +1,97 @@
+[
+    {
+        "term": "SP23",
+        "courses": [
+            {
+                "subject": "CS",
+                "course number": "233",
+                "title": "Computer Architecture",
+                "credit": 4,
+                "prereq": [
+                    ["CS 125", "CS 126"],
+                    ["CS 173", "MATH 213"]
+                ],
+                "concur": [
+                    ["CS225"]
+                ],
+                "equiv": []
+            },
+            {
+                "subject": "CS",
+                "course number": "341",
+                "title": "System Programming",
+                "credit": 4,
+                "prereq": [
+                    ["CS 225"],
+                    ["CS 233"]
+                ],
+                "concur": [
+                    
+                ],
+                "equiv": []
+            },
+            {
+                "subject": "ECE",
+                "course number": "374",
+                "title": "Introduction to Algorithms & Models of Computation",
+                "credit": 4,
+                "prereq": [
+                    ["CS 173", "MATH 213"],
+                    ["CS 225"]
+                ],
+                "concur": [
+                    
+                ],
+                "equiv": ["CS 374"]
+            },
+            {
+                "subject": "ECE",
+                "course number": "385",
+                "title": "Digital Systems Laboratory",
+                "credit": 3,
+                "prereq": [
+                    ["ECE 110"],
+                    ["ECE 220"]
+                ],
+                "concur": [
+                    
+                ],
+                "equiv": []
+            },
+            {
+                "subject": "MATH",
+                "course number": "357",
+                "title": "Numerical Methods I",
+                "credit": 3,
+                "prereq": [
+                    ["CS 101", "CS 105", "CS 124", "CS 125", "ECE 220"],
+                    ["MATH 241"],
+                    ["MATH 225", "MATH 257", "MATH 415", "MATH 415", "ASRM 406", "BIOE 210"]
+                ],
+                "concur": [
+
+                ],
+                "equiv": ["CS 357"]
+            },
+            {
+                "subject": "MATH",
+                "course number": "241",
+                "title": "Calculus III",
+                "credit": 4,
+                "prereq": [
+                    ["MATH 231"]
+                ],
+                "concur": [
+
+                ],
+                "equiv": []
+            }
+        ]
+    },
+    {
+        "term": "FA22",
+        "courses":[
+
+        ]
+    }
+]
