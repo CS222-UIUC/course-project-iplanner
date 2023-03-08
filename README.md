@@ -47,12 +47,10 @@
 
 ### MySQL Installation
 
-1. Go to [MySQL's official website](https://dev.mysql.com/downloads/).
-- If Windows: click **MySQL Installer for Windows** and download. When prompted, select **Setup Type > Developer Default**. If "MySQL for Visual Studio" gives a failing requirement error, click "Next > Continue" and ignore this particular installation. If any installation fails, click "Retry All".
-- If MacOS: download **Workbench**, **Community Server**, **Router**, **Shell** and install.
-2. After installation, you need to configure your MySQL server. Click "Next" through, and set a password for the `root` user when prompted.
-3. Start the MySQL Workbench. You should already see a "Local instance MySQL80" under "MySQL Connections". Click on the instance, enter your password, and tick "Save password in vault".
-4. If all is good you should see the database. On the middle left, at the blank spaces in "Schema", right click and select "Create schema". Create a schema called `iplanner`, **all lowercase**.
+1. Go to [MongoDB's official website](https://www.mongodb.com/try/download/community), select "Version 6.0.4 (current)", and download the MongoDB installer.
+2. Keep everything as default in the installer.
+3. Open MongoDB Compass (a GUI tool similar to MySQL workbench). Connect to `localhost:27017` (this should be the default connection).
+4. If all is good you should see the database. Create a database named `iplanner` and a collection named `courses`.
 
 ### Springboot JPA Configuration
 
