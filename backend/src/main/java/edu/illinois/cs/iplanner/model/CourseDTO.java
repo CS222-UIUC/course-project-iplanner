@@ -1,27 +1,33 @@
 package edu.illinois.cs.iplanner.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import java.util.List;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity
 @NoArgsConstructor
-@Table(name = "courses")
+@AllArgsConstructor
+@Document("courses")
 public class CourseDTO {
     @Id
-    @Column(name = "id")
-    private Integer id;
-
-    @Column(name = "subject")
+    private String id;
+    
     private String subject;
 
-    @Column(name = "number")
-    private Integer number;
+    private String number;
 
-    @Column(name = "name")
-    private String name;
+    private String title;
+
+    private Integer credit;
+
+    private List<List<String>> prereq;
+
+    private List<List<String>> concur;
+
+    private List<String> equiv;
 }

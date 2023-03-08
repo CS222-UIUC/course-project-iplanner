@@ -16,7 +16,7 @@ public class CourseController {
     CourseDAO courseDAO;
 
     @RequestMapping("/")
-    public List<CourseDTO> findAllCourses() {
+    List<CourseDTO> findAllCourses() {
         return courseDAO.findAll();
     }
 }

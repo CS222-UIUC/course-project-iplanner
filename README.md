@@ -47,34 +47,23 @@
 
 ### MySQL Installation
 
-1. Go to [MySQL's official website](https://dev.mysql.com/downloads/).
-- If Windows: click **MySQL Installer for Windows** and download. When prompted, select **Setup Type > Developer Default**. If "MySQL for Visual Studio" gives a failing requirement error, click "Next > Continue" and ignore this particular installation. If any installation fails, click "Retry All".
-- If MacOS: download **Workbench**, **Community Server**, **Router**, **Shell** and install.
-2. After installation, you need to configure your MySQL server. Click "Next" through, and set a password for the `root` user when prompted.
-3. Start the MySQL Workbench. You should already see a "Local instance MySQL80" under "MySQL Connections". Click on the instance, enter your password, and tick "Save password in vault".
-4. If all is good you should see the database. On the middle left, at the blank spaces in "Schema", right click and select "Create schema". Create a schema called `iplanner`, **all lowercase**.
+1. Go to [MongoDB's official website](https://www.mongodb.com/try/download/community), select "Version 6.0.4 (current)", and download the MongoDB installer.
+2. Keep everything as default in the installer.
+3. Open MongoDB Compass (a GUI tool similar to MySQL workbench). Connect to `localhost:27017` (this should be the default connection).
+4. If all is good you should see the database. Create a database named `iplanner` and a collection named `courses`.
 
 ### Springboot JPA Configuration
 
 1. Create `application-dev.properties` in directory `backend/src/main/resources` (i.e. the same directory as `application.properties`). This file is `.gitignore`'d from the project and contains local development environment information.
-2. Copy-paste the following configuration into the newly created file, and change `<mysql-password>` to your MySQL local password:
+2. Copy-paste the following configuration into the newly created file:
    ```
-   spring.datasource.url = jdbc:mysql://127.0.0.1:3306/iplanner?characterEncoding=UTF-8&serverTimezone=GMT%2D6
-   spring.datasource.username = root
-   spring.datasource.password = <mysql-password>
-   spring.datasource.driver-class-name = com.mysql.jdbc.Driver
-   spring.jpa.properties.hibernate.hdm2ddl.auto = update
-
-   spring.jpa.show-sql = true
-   spring.jpa.properties.hibernate.format_sql = true
+   spring.data.mongodb.uri = mongodb://localhost:27017/iplanner
+   spring.data.mongodb.database = iplanner
    ```
 3. In VSCode, reload your Java Project by "View > Command Palette" (in Windows `Ctrl+Shift+P`), search for "Java > Clean Java Language Server Workspace", hit Enter, and click "Reload and Delete" on the bottom-right pop-up.
-4. Open `IplannerApplication.java` and hit `Debug`. If everything is configured the backend should start successfully.
 
 ### Import Database from SQL file
 
-1. In MySQL, select "Server > Data Import".
-2. Tick "Import from Self-Contained File" and select the target SQL file in `/backend/sql`.
-3. Select "Default Target Schema" to `iplanner`.
-4. Select "Dump Structure and Data" (or data/structure only, on need).
-5. Click "Start Import".
+1. Click into `iplanner.courses` in MongoDB Compass. Click "Documents > Add Data > Insert Document".
+2. Replace the contents of the pop-up input to contents from `/backend/db/20230307_api_test_courses.json`, and click "Insert".
+3. Open `IplannerApplication.java` and hit `Debug`. If everything is configured the backend should start successfully, and accessing `localhost:1123/api/course/` should show the imported data.
