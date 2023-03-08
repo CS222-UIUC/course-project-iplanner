@@ -66,4 +66,4 @@
 
 1. Click into `iplanner.courses` in MongoDB Compass. Click "Documents > Add Data > Insert Document".
 2. Replace the contents of the pop-up input to contents from `/backend/db/20230307_api_test_courses.json`, and click "Insert".
-3. Open `IplannerApplication.java` and hit `Debug`. If everything is configured the backend should start successfully.
+3. Open `IplannerApplication.java` and hit `Debug`. If everything is configured the backend should start successfully, and accessing `localhost:1123/api/course/` should show the imported data.
