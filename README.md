@@ -55,24 +55,15 @@
 ### Springboot JPA Configuration
 
 1. Create `application-dev.properties` in directory `backend/src/main/resources` (i.e. the same directory as `application.properties`). This file is `.gitignore`'d from the project and contains local development environment information.
-2. Copy-paste the following configuration into the newly created file, and change `<mysql-password>` to your MySQL local password:
+2. Copy-paste the following configuration into the newly created file:
    ```
-   spring.datasource.url = jdbc:mysql://127.0.0.1:3306/iplanner?characterEncoding=UTF-8&serverTimezone=GMT%2D6
-   spring.datasource.username = root
-   spring.datasource.password = <mysql-password>
-   spring.datasource.driver-class-name = com.mysql.jdbc.Driver
-   spring.jpa.properties.hibernate.hdm2ddl.auto = update
-
-   spring.jpa.show-sql = true
-   spring.jpa.properties.hibernate.format_sql = true
+   spring.data.mongodb.uri = mongodb://localhost:27017/iplanner
+   spring.data.mongodb.database = iplanner
    ```
 3. In VSCode, reload your Java Project by "View > Command Palette" (in Windows `Ctrl+Shift+P`), search for "Java > Clean Java Language Server Workspace", hit Enter, and click "Reload and Delete" on the bottom-right pop-up.
-4. Open `IplannerApplication.java` and hit `Debug`. If everything is configured the backend should start successfully.
 
 ### Import Database from SQL file
 
-1. In MySQL, select "Server > Data Import".
-2. Tick "Import from Self-Contained File" and select the target SQL file in `/backend/sql`.
-3. Select "Default Target Schema" to `iplanner`.
-4. Select "Dump Structure and Data" (or data/structure only, on need).
-5. Click "Start Import".
+1. Click into `iplanner.courses` in MongoDB Compass. Click "Documents > Add Data > Insert Document".
+2. Replace the contents of the pop-up input to contents from `/backend/db/20230307_api_test_courses.json`, and click "Insert".
+3. Open `IplannerApplication.java` and hit `Debug`. If everything is configured the backend should start successfully.
