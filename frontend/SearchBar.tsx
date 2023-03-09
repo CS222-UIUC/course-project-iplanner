@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import data from "/Users/Anant/course-project-iplanner/backend/db/20230307_api_test_courses.json";
+import data from "./20230307_api_test_courses.json";
 
 interface Course {
   _id: {
