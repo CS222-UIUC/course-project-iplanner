@@ -4,7 +4,7 @@ import './App.css';
 import { Card, Grid, NextUIProvider } from '@nextui-org/react';
 
 import { ReactSortable } from "react-sortablejs";
-import SearchBar from './SearchBar';
+import SearchBar from './components/SearchBar';
 
 interface Course {
   id: string,
