@@ -7,11 +7,10 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
 import edu.illinois.cs.iplanner.dao.CourseDAO;
 import edu.illinois.cs.iplanner.model.CourseDTO;
+import edu.illinois.cs.iplanner.vo.CourseViewVO;
 
 @RestController
 @RequestMapping("/api/course")
@@ -20,8 +19,13 @@ public class CourseController {
     CourseDAO courseDAO;
 
     @RequestMapping("/") // Returns a list of all courses
-    List<CourseDTO> findAllCourses() {
-        return courseDAO.findAll();
+    List<CourseViewVO> getAllCourses() {
+        List<CourseDTO> courses = courseDAO.findAll();
+        ArrayList<CourseViewVO> allCourses = new ArrayList<CourseViewVO>();
+        for (CourseDTO course : courses) {
+            allCourses.add(new CourseViewVO(course));
+        }
+        return allCourses;
     }
 
     @RequestMapping("/subjects") // Returns a list of all subjects (e.g. CS, Stats, ECE, etc.)
@@ -50,12 +54,5 @@ public class CourseController {
         List<CourseDTO> getDesiredCourse = getCourses(subject_name);
         getDesiredCourse.removeIf(course->(!course.getNumber().equals(number)));
         return getDesiredCourse.get(0);
-    }
-
-    @RequestMapping("/search") // Returns a list of courses that users intend to search
-    @ResponseBody
-    public List<CourseDTO> searchforcourse(@RequestParam(value = "search", required = false) String searchString) {
-        // TODO:
-        return new ArrayList<CourseDTO>();
     }
 }
