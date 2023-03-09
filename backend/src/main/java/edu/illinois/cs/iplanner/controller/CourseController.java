@@ -29,7 +29,9 @@ public class CourseController {
         List<String> allSubjects = new ArrayList<String>();
         List<CourseDTO> courses = courseDAO.findAll();
         for (CourseDTO course : courses) {
-            allSubjects.add(course.getSubject());
+            if (!allSubjects.contains(course.getSubject())){
+                allSubjects.add(course.getSubject());
+            }
         }
         return allSubjects;
     }
@@ -37,45 +39,17 @@ public class CourseController {
     @RequestMapping("/subjects/{subject_name}") // Returns a list of courses in "subject_name" category
     List<CourseDTO> getCourses(@PathVariable(name = "subject_name") String subject_name) throws IOException {
         List<CourseDTO> allCourses = courseDAO.findAll();
-        allCourses.removeIf(course -> (course.getSubject() != subject_name));
+        allCourses.removeIf(course -> (!course.getSubject().equals(subject_name)));
         return allCourses;
     }
 
     @RequestMapping("/subjects/{subject_name}/{number}") // Returns the info of one course (e.g. CS 101: "title: Intro
                                                          // Computing: ...", "credit: 3", "prereq: if any", "concur: if
                                                          // any", "equiv: if any")
-    String getCourseInfo(@PathVariable(name = "subject_name") String subject_name,
-            @PathVariable(name = "number") String number) throws IOException {
-        List<CourseDTO> allCourses = getCourses(subject_name);
-        CourseDTO desiredCourse = new CourseDTO();
-        for (CourseDTO course : allCourses) {
-            if (course.getNumber() == number)
-                desiredCourse = course;
-        }
-        String course_info = "Course: " + desiredCourse.getSubject() + " " + desiredCourse.getNumber() + ": "
-                + desiredCourse.getTitle() + "\n" + "Credit: " + desiredCourse.getCredit().toString() + "\n";
-        if (desiredCourse.getPrereq().size() != 0) {
-            List<List<String>> prereqs = desiredCourse.getPrereq();
-            course_info = course_info + "Prerequisit(s): " + "\n";
-            for (List<String> prereq : prereqs) {
-                course_info = course_info + "   " + "One of the following: " + "\n";
-                for (String courses : prereq) {
-                    course_info = course_info + "     " + courses + " ";
-                }
-                course_info += "\n";
-            }
-
-        }
-        if (desiredCourse.getConcur().size() != 0) {
-        }
-        if (desiredCourse.getEquiv().size() != 0) {
-            course_info += "Equivalent to: ";
-            for (String courses : desiredCourse.getEquiv()) {
-                course_info += courses + " ";
-            }
-            course_info += "\n";
-        }
-        return course_info;
+    CourseDTO getCourseInfo(@PathVariable(name = "subject_name") String subject_name, @PathVariable(name = "number") String number) throws IOException {
+        List<CourseDTO> getDesiredCourse = getCourses(subject_name);
+        getDesiredCourse.removeIf(course->(!course.getNumber().equals(number)));
+        return getDesiredCourse.get(0);
     }
 
     @RequestMapping("/search") // Returns a list of courses that users intend to search
