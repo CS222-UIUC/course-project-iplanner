@@ -1,26 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from "react";
+import data from "/Users/Anant/course-project-iplanner/backend/db/20230307_api_test_courses.json";
 
 interface Course {
-  id: number;
+  _id: {
+    $oid: string;
+  };
   subject: string;
-  catalog_number: string;
+  number: string;
+  title: string;
+  credit: number;
 }
 
-function SearchBar() {
-  const [searchTerm, setSearchTerm] = useState('');
+const SearchBar: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<Course[]>([]);
-  const [data, setData] = useState<Course[]>([]);
-
-  useEffect(() => {
-    fetch('/data.json')
-      .then((response) => response.json())
-      .then((jsonData) => {
-        setData(jsonData);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -34,15 +27,16 @@ function SearchBar() {
   return (
     <div>
       <input type="text" value={searchTerm} onChange={handleChange} />
-      <ul>
-        {searchResults.map((course) => (
-          <li key={course.id}>
-            {course.subject} - {course.catalog_number}
-          </li>
-        ))}
-      </ul>
+      {searchResults.map((course: Course) => (
+        <div key={course._id.$oid}>
+          <h3>
+            {course.subject} {course.number}
+          </h3>
+          <p>{course.title}</p>
+        </div>
+      ))}
     </div>
   );
-}
+};
 
 export default SearchBar;
