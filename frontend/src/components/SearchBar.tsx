@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import data from "./20230307_api_test_courses.json";
+import data from "../20230307_api_test_courses.json";
 
 interface Course {
   _id: {
@@ -17,12 +17,20 @@ const SearchBar: React.FC = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    const results = data.filter(
-      (course: Course) =>
-        course.subject.toLowerCase().includes(event.target.value.toLowerCase())
+  
+    const keywords = event.target.value.toLowerCase().split(/\s+/);
+  
+    const results = data.filter((course: Course) =>
+      keywords.every((keyword) =>
+        [course.subject, course.number, course.title].some((field) =>
+          field.toLowerCase().includes(keyword)
+        )
+      )
     );
+  
     setSearchResults(results);
   };
+
 
   return (
     <div>
