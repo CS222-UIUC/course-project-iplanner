@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import data from "../20230307_api_test_courses.json";
 
-interface Course {
-  _id: {
-    $oid: string;
-  };
-  subject: string;
-  number: string;
-  title: string;
-  credit: number;
-}
+import { Course } from "../App"
 
 const SearchBar: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,26 +9,23 @@ const SearchBar: React.FC = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-  
     const keywords = event.target.value.toLowerCase().split(/\s+/);
-  
+
     const results = data.filter((course: Course) =>
       keywords.every((keyword) =>
-        [course.subject, course.number, course.title].some((field) =>
+        [course.subject, course.number, course.title,course.subject+course.number].some((field) =>
           field.toLowerCase().includes(keyword)
         )
       )
     );
-  
     setSearchResults(results);
   };
-
 
   return (
     <div>
       <input type="text" value={searchTerm} onChange={handleChange} />
       {searchResults.map((course: Course) => (
-        <div key={course._id.$oid}>
+        <div key={course.id}>
           <h3>
             {course.subject} {course.number}
           </h3>
