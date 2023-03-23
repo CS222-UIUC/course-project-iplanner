@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import data from "../20230307_api_test_courses.json";
 
-interface Course {
-  _id: {
-    $oid: string;
-  };
-  subject: string;
-  number: string;
-  title: string;
-  credit: number;
-}
+import { Course } from "../App"
 
 const SearchBar: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,7 +20,7 @@ const SearchBar: React.FC = () => {
     <div>
       <input type="text" value={searchTerm} onChange={handleChange} />
       {searchResults.map((course: Course) => (
-        <div key={course._id.$oid}>
+        <div key={course.id}>
           <h3>
             {course.subject} {course.number}
           </h3>
