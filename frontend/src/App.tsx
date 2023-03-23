@@ -5,23 +5,31 @@ import { Card, Grid, NextUIProvider } from '@nextui-org/react';
 
 import { ReactSortable } from "react-sortablejs";
 import SearchBar from './components/SearchBar';
+import { flushSync } from 'react-dom';
 
-interface Course {
+export interface Course {
   id: string,
   subject: string,
   number: string,
-  title: string
+  title: string,
+  credit: number
+}
+
+type Dispatch<A> = (value: A) => void;
+
+function setCourseAtIdx(setFcn: Dispatch<Course[][]>, courseList: Course[][], idx: number): Dispatch<Course[]> {
+  return (courseRow: Course[]) => {
+    let cloned = {...courseList};
+    cloned[idx] = courseRow;
+    console.log(idx, cloned);
+    setFcn(cloned);
+    flushSync(() => {});
+  };
 }
 
 function App() {
-  const [courseList, setCourseList] = useState<Course[]>([
-    { id: "1", subject: "CS", number: "124", title: "Computer Science I"},
-    { id: "2", subject: "CS", number: "128", title: "Computer Science II"},
-  ]);
-
-  const [courseList2, setCourseList2] = useState<Course[]>([
-    { id: "3", subject: "CS", number: "225", title: "Data Structures"},
-  ]);
+  const NUM_SEMESTERS = 8;
+  const [courseList, setCourseList] = useState<Course[][]>(new Array<Course[]>(NUM_SEMESTERS));
 
   return (
     <NextUIProvider>
@@ -29,18 +37,16 @@ function App() {
         <Grid xs={9}>
           <Grid.Container>
             <Grid xs={4}>
-              <ReactSortable list={courseList} setList={setCourseList} group="courses">
-                {courseList.map((item) => (
-                  <Card key={item.id}>{`${item.subject} ${item.number}`}<br/>{item.title}</Card>
-                ))}
-              </ReactSortable>
-            </Grid>
-            <Grid xs={4}>
-              <ReactSortable list={courseList2} setList={setCourseList2} group="courses">
-                {courseList2.map((item) => (
-                  <Card key={item.id}>{`${item.subject} ${item.number}`}<br/>{item.title}</Card>
-                ))}
-              </ReactSortable>
+              {Object.keys(courseList).map((key) => {
+                let idx = parseInt(key);
+                return (
+                  <ReactSortable key={idx} list={courseList[idx]} setList={setCourseAtIdx(setCourseList, courseList, idx)} group="courses">
+                    {courseList[idx].map((item) => (
+                      <Card key={item.id}>{`${item.subject} ${item.number}`}<br/>{item.title}</Card>
+                    ))}
+                  </ReactSortable>
+                )
+              })}
             </Grid>
           </Grid.Container>
         </Grid>
