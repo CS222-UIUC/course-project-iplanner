@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import { Card } from "@nextui-org/react";
+import { Course } from "../App";
 
-function CourseCard() {
+interface CourseProp {
+  course: Course
+}
+
+function CourseCard({ course }: CourseProp) {
   return (
-    <Card key={item.id}>{`${item.subject} ${item.number}`}<br/>{item.title}</Card>
+    <Card key={course.id}>
+      {`${course.subject} ${course.number}`}<br/>{course.title}
+    </Card>
   )
 }
 

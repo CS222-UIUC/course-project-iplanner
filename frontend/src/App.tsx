@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import './App.css';
 
-import { Card, Grid, NextUIProvider } from '@nextui-org/react';
+import { Grid, NextUIProvider } from '@nextui-org/react';
 
 import { ReactSortable } from "react-sortablejs";
 import SearchBar from './components/SearchBar';
+import CourseCard from './components/CourseCard';
 import { flushSync } from 'react-dom';
 
 export interface Course {
@@ -42,7 +43,7 @@ function App() {
                 return (
                   <ReactSortable key={idx} list={courseList[idx]} setList={setCourseAtIdx(setCourseList, courseList, idx)} group="courses">
                     {courseList[idx].map((item) => (
-                      <Card key={item.id}>{`${item.subject} ${item.number}`}<br/>{item.title}</Card>
+                      <CourseCard course={item} />
                     ))}
                   </ReactSortable>
                 )
