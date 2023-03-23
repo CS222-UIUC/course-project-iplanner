@@ -9,9 +9,14 @@ const SearchBar: React.FC = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    const results = data.filter(
-      (course: Course) =>
-        course.subject.toLowerCase().includes(event.target.value.toLowerCase())
+    const keywords = event.target.value.toLowerCase().split(/\s+/);
+
+    const results = data.filter((course: Course) =>
+      keywords.every((keyword) =>
+        [course.subject, course.number, course.title,course.subject+course.number].some((field) =>
+          field.toLowerCase().includes(keyword)
+        )
+      )
     );
     setSearchResults(results);
   };
