@@ -30,4 +30,5 @@ public class CourseDTO {
     private List<List<String>> concur;
 
     private List<String> equiv;
+
 }
