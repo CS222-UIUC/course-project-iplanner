@@ -4,14 +4,15 @@ import { ReactSortable } from "react-sortablejs";
 
 import { Course } from "../App"
 import CourseCard from "./CourseCard";
-import { Container, Input, FormElement, Spacer } from "@nextui-org/react";
+import Container from "react-bootstrap/esm/Container";
+import Form from 'react-bootstrap/Form';
 
 const SearchBar: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [availCourses, setAvailCourses] = useState(data);
   const [searchResults, setSearchResults] = useState<boolean[]>([]);
 
-  const handleChange = (event: ChangeEvent<FormElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
     const keywords = event.target.value.toLowerCase().split(/\s+/).filter((str) => str.length > 0);
 
@@ -24,9 +25,10 @@ const SearchBar: React.FC = () => {
   };
 
   return (
-    <Container>
-      <Input bordered type="text" value={searchTerm} onChange={handleChange} />
-      <Spacer y={1} />
+    <Container fluid>
+      <Form>
+        <Form.Control type="text" value={searchTerm} onChange={handleChange} />
+      </Form>
       <ReactSortable list={availCourses} setList={setAvailCourses} group="courses">
         {availCourses.filter((_, idx) => searchResults[idx]).map((item) => (
           <CourseCard key={item.id} course={item} />
