@@ -1,11 +1,8 @@
-import React, { createContext, useState } from 'react';
+import { createContext, useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { ReactSortable } from "react-sortablejs";
 import SearchBar from './components/SearchBar';
-import CourseCard from './components/CourseCard';
-import { flushSync } from 'react-dom';
 import { Container } from 'react-bootstrap';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
@@ -34,10 +31,10 @@ function App() {
   return (
     <Container fluid>
       <Row className="mt-2">
-        <Col xs={9}>
+        <Col xs={10}>
           <PlanTable />
         </Col>
-        <Col xs={3}>
+        <Col xs={2}>
           <SearchBar />
         </Col>
       </Row>

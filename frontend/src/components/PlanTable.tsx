@@ -11,7 +11,6 @@ function setCourseAtIdx(setFcn: Dispatch<Course[][]>, courseList: Course[][], id
   return (courseRow: Course[]) => {
     let cloned = {...courseList};
     cloned[idx] = courseRow;
-    console.log(idx, cloned);
     setFcn(cloned);
     flushSync(() => {});
   };
@@ -23,26 +22,30 @@ function PlanTable() {
   for (let i = 0; i < NUM_SEMESTERS; ++i) empty[i] = [];
   const [courseList, setCourseList] = useState<Course[][]>(empty);
 
+  const YEAR_LABELS = ["Freshman", "Sophomore", "Junior", "Senior"];
+
   return (
     <Container fluid>
       <Row className="text-center h5">
-        <Col>Freshman</Col>
-        <Col>Sophomore</Col>
-        <Col>Junior</Col>
-        <Col>Senior</Col>
-      </Row>
-      <Row>
-        {Object.keys(courseList).map((_, idx) => {
+        {YEAR_LABELS.map((yearLabel, yearIdx) => {
+          const semIdxs = [yearIdx * 2, yearIdx * 2 + 1];
           return (
-            <Col key={idx} className="mr-1">
-              <ReactSortable list={courseList[idx]} setList={setCourseAtIdx(setCourseList, courseList, idx)}
-                              group="courses" swapThreshold={1.5}>
-                {courseList[idx]?.map((item) => (
-                  <CourseCard key={item.id} course={item} />
+            <Col key={yearLabel + yearIdx} className="border-right">
+              <Row className="justify-content-center align-items-center">{yearLabel}</Row>
+              <Row>
+                {semIdxs.map((semIdx) => (
+                  <Col key={semIdx} className="p-0">
+                    <ReactSortable list={courseList[semIdx]} setList={setCourseAtIdx(setCourseList, courseList, semIdx)}
+                                    group="courses" swapThreshold={1.5}>
+                      {courseList[semIdx]?.map((item) => (
+                        <CourseCard key={item.id} course={item} />
+                      ))}
+                    </ReactSortable>
+                  </Col>
                 ))}
-              </ReactSortable>
+              </Row>
             </Col>
-          );
+          )
         })}
       </Row>
     </Container>
