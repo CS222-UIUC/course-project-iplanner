@@ -1,44 +1,50 @@
-import { useState } from "react";
+// 8 draggable columns for each semesters.
+
+import { SetStateAction, useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { flushSync } from "react-dom";
 import { ReactSortable } from "react-sortablejs";
 import { Course } from "../App";
 import CourseCard from "./CourseCard";
 
 type Dispatch<A> = (value: A) => void;
 
-function setCourseAtIdx(setFcn: Dispatch<Course[][]>, courseList: Course[][], idx: number): Dispatch<Course[]> {
+function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: number): Dispatch<Course[]> {
   return (courseRow: Course[]) => {
-    let cloned = {...courseList};
-    cloned[idx] = courseRow;
-    setFcn(cloned);
-    flushSync(() => {});
+    setFcn((prevCoursePlan: Course[][]) => {
+      let cloned = [...prevCoursePlan];
+      cloned[idx] = courseRow;
+      return cloned;
+    })
   };
 }
 
-function PlanTable() {
+function PlanTable({ allCourses }: { allCourses: Course[] }) {
   const NUM_SEMESTERS = 8;
-  let empty: Course[][] = [];
-  for (let i = 0; i < NUM_SEMESTERS; ++i) empty[i] = [];
-  const [courseList, setCourseList] = useState<Course[][]>(empty);
+  const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
+
+  // if allCourses list is reloaded, restart planning
+  // TODO: change to "reload plan" instead of wiping the plan
+  useEffect(() => {
+    setCoursePlan(new Array(NUM_SEMESTERS).fill([]));
+  }, [ allCourses ]);
 
   const YEAR_LABELS = ["Freshman", "Sophomore", "Junior", "Senior"];
 
   return (
     <Container fluid>
-      <Row className="text-center h5">
+      <Row>
         {YEAR_LABELS.map((yearLabel, yearIdx) => {
           const semIdxs = [yearIdx * 2, yearIdx * 2 + 1];
           return (
-            <Col key={yearLabel + yearIdx} className="border-right">
-              <Row className="justify-content-center align-items-center">{yearLabel}</Row>
+            <Col key={yearLabel + yearIdx} className="border-end border-2">
+              <Row className="justify-content-center align-items-center h5">{yearLabel}</Row>
               <Row>
                 {semIdxs.map((semIdx) => (
-                  <Col key={semIdx} className="p-0">
-                    <ReactSortable list={courseList[semIdx]} setList={setCourseAtIdx(setCourseList, courseList, semIdx)}
+                  <Col key={semIdx} className="ps-0 pe-1">
+                    <ReactSortable list={coursePlan[semIdx]} setList={setCoursePlanAtSem(setCoursePlan, semIdx)}
                                     group="courses" swapThreshold={1.5}>
-                      {courseList[semIdx]?.map((item) => (
-                        <CourseCard key={item.id} course={item} />
+                      {coursePlan[semIdx]?.map((course) => (
+                        <CourseCard key={course.id} course={course} />
                       ))}
                     </ReactSortable>
                   </Col>

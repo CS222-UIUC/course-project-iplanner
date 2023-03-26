@@ -1,37 +1,54 @@
-import React, { ChangeEvent, useState } from "react";
-import data from "../20230307_api_test_courses.json";
+import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 
-import { Course } from "../App"
+import { CardCtx, Course } from "../App"
 import CourseCard from "./CourseCard";
 import Container from "react-bootstrap/esm/Container";
 import Form from 'react-bootstrap/Form';
+import useCardActions from "../utils/CardActions";
 
-const SearchBar: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [availCourses, setAvailCourses] = useState(data);
-  const [searchResults, setSearchResults] = useState<boolean[]>([]);
+function SearchBar({ allCourses } : { allCourses: Course[] }) {
+  const { cardStates } = useContext(CardCtx);
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [availCourses, setAvailCourses] = useState<Course[]>([]);
+
+  // On change of allCourse (api call returns), set available Courses!
+  useEffect(() => {
+    setAvailCourses(allCourses);
+  }, [ allCourses ]);
+
+  // Since "useCardActions" is a self-defined hook, it needs to be called at the top of another hook,
+  // not in a callback function. Thus we retrieve dispatch functions from hook useCardActions() at top
+  // of our function, and make calls  to these dispatch functions later/
+  const { setSearch, clearSearch } = useCardActions();
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
     const keywords = event.target.value.toLowerCase().split(/\s+/).filter((str) => str.length > 0);
 
-    const results = availCourses.map((course: Course) =>
-      keywords.every(
+    // If match, dispatch a setSearch() event using cardActions; o/w clearSearch().
+    allCourses.forEach((course) => {
+      const matches = keywords.length > 0 && keywords.every(
         (keyword) => (course.subject + course.number + course.title).toLowerCase().includes(keyword)
-      )
-    );
-    setSearchResults(results);
+      );
+      if (matches) {
+        setSearch(course.id);
+      } else {
+        clearSearch(course.id);
+      }
+    });
   };
 
   return (
     <Container fluid>
       <Form>
-        <Form.Control type="text" value={searchTerm} onChange={handleChange} />
+        <Form.Control type="text" placeholder="Search Course..." value={searchTerm} onChange={handleInputChange} />
       </Form>
       <ReactSortable list={availCourses} setList={setAvailCourses} group="courses">
-        {availCourses.filter((_, idx) => searchResults[idx]).map((item) => (
-          <CourseCard key={item.id} course={item} />
+        {availCourses?.map((course) => (
+          <div key={course.id} className={cardStates[course.id]?.searched ? "" : "d-none"}>
+            <CourseCard course={course} />
+          </div>
         ))}
       </ReactSortable>
     </Container>
