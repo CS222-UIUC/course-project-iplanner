@@ -1,6 +1,7 @@
 package edu.illinois.cs.iplanner.controller;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import edu.illinois.cs.iplanner.dao.CourseDAO;
 import edu.illinois.cs.iplanner.model.CourseDTO;
 import edu.illinois.cs.iplanner.vo.CourseViewVO;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/course")
@@ -25,6 +27,16 @@ public class CourseController {
             allCourses.add(new CourseViewVO(course));
         }
         return allCourses;
+    }
+
+    @RequestMapping("/id/{id}")
+    public CourseViewVO getCourseById(@PathVariable(name = "id") String id, HttpServletResponse response) {
+        Optional<CourseDTO> course = courseDAO.findById(id);
+        if (course.isPresent()) {
+            return new CourseViewVO(course.get());
+        }
+        response.setStatus(400); // Http status code: bad request
+        return null;
     }
 
     @RequestMapping("/subjects") // Returns a list of all subjects (e.g. CS, Stats, ECE, etc.)
