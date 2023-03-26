@@ -1,8 +1,10 @@
 import { useContext } from "react";
 import { CardCtx } from "../App";
 
+
+type Relation = "prereq" | "concur" | "subseq" | "equiv" | "none";
 export interface CardState {
-  highlight: "prereq" | "concur" | "subseq" | "equiv",
+  relation: Relation,
   searched: boolean
 }
 
@@ -14,23 +16,31 @@ export interface CardAction {
 // Handles different CardActions and changes corresponding cardStates.
 // Note the "updating a field of a complex object" syntax used.
 export function cardReducer(cardStates: Record<string, CardState>, action: CardAction) {
+  const update = (cardStates: Record<string, CardState>, id: string, key: string, value: any) => {
+    return {
+      ...cardStates,
+      [id]: {
+        ...cardStates[id],
+        [key]: value
+      }
+    }
+  }
+
   switch (action.type) {
     case 'SEARCH_SET':
-      return {
-        ...cardStates,
-        [action.id]: {
-          ...cardStates[action.id],
-          searched: true
-        }
-      };
+      return update(cardStates, action.id, "searched", true);
     case 'SEARCH_CLEAR':
-      return {
-        ...cardStates,
-        [action.id]: {
-          ...cardStates[action.id],
-          searched: false
-        }
-      };
+      return update(cardStates, action.id, "searched", false);
+    case 'RELATION_PREREQ':
+      return update(cardStates, action.id, "relation", "prereq");
+    case 'RELATION_CONCUR':
+      return update(cardStates, action.id, "relation", "concur");
+    case 'RELATION_SUBSEQ':
+      return update(cardStates, action.id, "relation", "subseq");
+    case 'RELATION_EQUIV':
+      return update(cardStates, action.id, "relation", "equiv");
+    case 'RELATION_NONE':
+      return update(cardStates, action.id, "relation", "none");
     default:
       return cardStates;
   }
@@ -55,10 +65,23 @@ function useCardActions() {
       type: "SEARCH_CLEAR"
     });
   };
+  const setRelation = (id: string, relation: Relation) => {
+    cardDispatch({
+      id,
+      type: `RELATION_${relation.toUpperCase()}`
+    })
+  };
+  const clearRelation = (id: string) => {
+    cardDispatch({
+      id,
+      type: "RELATION_NONE"
+    })
+  }
 
   return {
     setSearch,
-    clearSearch
+    clearSearch,
+    setRelation
   }
 }
 

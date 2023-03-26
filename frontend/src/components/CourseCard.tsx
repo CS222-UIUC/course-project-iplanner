@@ -18,6 +18,11 @@ function CourseCard({ course }: { course: Course }) {
           (<Search style={{position: "absolute", top: "10px", right: "10px"}} className="text-primary" />) :
           null
         }
+        {
+          cardStates[course.id]?.relation !== "none" ?
+          (<div style={{position: "absolute", bottom: "10px", right: "20px"}}>{cardStates[course.id]?.relation}</div>) :
+          null
+        }
       </Card>
     </div>
   )

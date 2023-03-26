@@ -39,6 +39,9 @@ function SearchBar({ allCourses } : { allCourses: Course[] }) {
     });
   };
 
+  // Note that courses not matching the searchking keywords are being set to "display: none"
+  // instead of doing filtering (availCourse.filter().map()). The latter messes up the inherent
+  // indices of each course and causes the wrong course to be moved when dragged.
   return (
     <Container fluid>
       <Form>
