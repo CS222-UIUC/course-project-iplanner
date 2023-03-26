@@ -38,6 +38,7 @@
 3. Start the frontend server:
    ```sh
    cd frontend/
+   yarn install
    yarn start
    ```
 
