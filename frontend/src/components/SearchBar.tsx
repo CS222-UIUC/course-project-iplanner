@@ -1,19 +1,20 @@
 import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 
-import { CardCtx, Course } from "../App"
+import { CardCtx, Course, CourseCtx } from "../App"
 import CourseCard from "./CourseCard";
 import Container from "react-bootstrap/esm/Container";
 import Form from 'react-bootstrap/Form';
 import useCardActions from "../utils/CardActions";
 
-function SearchBar({ allCourses } : { allCourses: Course[] }) {
+function SearchBar() {
   const { cardStates } = useContext(CardCtx);
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [availCourses, setAvailCourses] = useState<Course[]>([]);
 
   // On change of allCourse (api call returns), set available Courses!
+  const allCourses = useContext(CourseCtx);
   useEffect(() => {
     setAvailCourses(allCourses);
   }, [ allCourses ]);
@@ -39,7 +40,7 @@ function SearchBar({ allCourses } : { allCourses: Course[] }) {
     });
   };
 
-  // Note that courses not matching the searchking keywords are being set to "display: none"
+  // Note that courses not matching the searching keywords are being set to "display: none"
   // instead of doing filtering (availCourse.filter().map()). The latter messes up the inherent
   // indices of each course and causes the wrong course to be moved when dragged.
   return (

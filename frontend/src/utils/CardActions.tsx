@@ -1,8 +1,10 @@
 import { useContext } from "react";
 import { CardCtx } from "../App";
 
-
-type Relation = "prereq" | "concur" | "subseq" | "equiv" | "none";
+// Prerequisite chain | immediate prerequisite | prereq or concur registration |
+// courses that have this course as prechn/prereq | equivalent |
+// current selected course | no relation
+type Relation = "prechn" | "prereq" | "concur" | "subseq" | "equiv" | "curr" | "none";
 export interface CardState {
   relation: Relation,
   searched: boolean
@@ -31,6 +33,8 @@ export function cardReducer(cardStates: Record<string, CardState>, action: CardA
       return update(cardStates, action.id, "searched", true);
     case 'SEARCH_CLEAR':
       return update(cardStates, action.id, "searched", false);
+    case 'RELATION_PRECHN':
+      return update(cardStates, action.id, "relation", "prechn");
     case 'RELATION_PREREQ':
       return update(cardStates, action.id, "relation", "prereq");
     case 'RELATION_CONCUR':
@@ -39,6 +43,8 @@ export function cardReducer(cardStates: Record<string, CardState>, action: CardA
       return update(cardStates, action.id, "relation", "subseq");
     case 'RELATION_EQUIV':
       return update(cardStates, action.id, "relation", "equiv");
+    case 'RELATION_CURR':
+      return update(cardStates, action.id, "relation", "curr");
     case 'RELATION_NONE':
       return update(cardStates, action.id, "relation", "none");
     default:
@@ -81,7 +87,8 @@ function useCardActions() {
   return {
     setSearch,
     clearSearch,
-    setRelation
+    setRelation,
+    clearRelation
   }
 }
 

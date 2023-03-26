@@ -1,9 +1,9 @@
 // 8 draggable columns for each semesters.
 
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useContext, useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { ReactSortable } from "react-sortablejs";
-import { Course } from "../App";
+import { Course, CourseCtx } from "../App";
 import CourseCard from "./CourseCard";
 
 type Dispatch<A> = (value: A) => void;
@@ -18,12 +18,13 @@ function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: n
   };
 }
 
-function PlanTable({ allCourses }: { allCourses: Course[] }) {
+function PlanTable() {
   const NUM_SEMESTERS = 8;
   const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
 
   // if allCourses list is reloaded, restart planning
   // TODO: change to "reload plan" instead of wiping the plan
+  const allCourses = useContext(CourseCtx);
   useEffect(() => {
     setCoursePlan(new Array(NUM_SEMESTERS).fill([]));
   }, [ allCourses ]);

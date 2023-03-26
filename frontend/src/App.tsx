@@ -32,6 +32,7 @@ const emptyCardCtxType: CardCtxType = {
   cardDispatch: (arg: CardAction) => {}
 };
 export const CardCtx = createContext(emptyCardCtxType);
+export const CourseCtx = createContext<Course[]>([]);
 
 function App() {
   const [cardStates, cardDispatch] = useReducer(cardReducer, {});
@@ -44,16 +45,18 @@ function App() {
 
   return (
     <Container fluid>
-      <CardCtx.Provider value={{ cardStates, cardDispatch }}>
-        <Row className="mt-2">
-          <Col xs={10}>
-            <PlanTable allCourses={allCourses}/>
-          </Col>
-          <Col xs={2}>
-            <SearchBar allCourses={allCourses}/>
-          </Col>
-        </Row>
-      </CardCtx.Provider>
+      <CourseCtx.Provider value={allCourses}>
+        <CardCtx.Provider value={{ cardStates, cardDispatch }}>
+          <Row className="mt-2">
+            <Col xs={10}>
+              <PlanTable />
+            </Col>
+            <Col xs={2}>
+              <SearchBar />
+            </Col>
+          </Row>
+        </CardCtx.Provider>
+      </CourseCtx.Provider>
     </Container>
   )
 }
