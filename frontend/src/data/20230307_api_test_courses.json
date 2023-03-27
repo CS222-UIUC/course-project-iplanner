@@ -1,0 +1,53 @@
+[
+  {
+    "id": "6407d6c40f45cd3dddf4c532",
+    "subject" : "CS",
+    "number" : "124",
+    "title" : "Introduction to Computer Science I",
+    "credit" : 3,
+    "equiv" : [ ],
+    "concur" : [ ],
+    "prereq" : [ ]
+  },
+  {
+    "id": "6407d6c40f45cd3dddf4c533",
+    "subject" : "CS",
+    "number" : "128",
+    "title" : "Introduction to Computer Science II",
+    "credit" : 3,
+    "equiv" : [ ],
+    "concur" : [ ],
+    "prereq" : [ [ "6407d6c40f45cd3dddf4c532" ] ]
+  },
+  {
+    "id": "6407d6c40f45cd3dddf4c534",
+    "subject" : "CS",
+    "number" : "173",
+    "title" : "Discrete Structures",
+    "credit" : 3,
+    "equiv" : [ "CS 173", "MATH 213" ],
+    "concur" : [ ],
+    "prereq" : [ [ "6407d6c40f45cd3dddf4c532" ] ]
+  },
+  {
+    "id": "6407d6c40f45cd3dddf4c535",
+    "subject" : "CS",
+    "number" : "225",
+    "title" : "Data Structures",
+    "credit" : 4,
+    "same" : [ ],
+    "equiv" : [ "CS 277", "CS 225" ],
+    "concur" : [ ],
+    "prereq" : [ [ "6407d6c40f45cd3dddf4c533" ], [ "6407d6c40f45cd3dddf4c534" ] ]
+  },
+  {
+    "id": "6407d6c40f45cd3dddf4c536",
+    "subject" : "CS",
+    "number" : "233",
+    "title" : "Computer Architecture",
+    "credit" : 4,
+    "equiv" : [ ],
+    "concur" : [ [ "6407d6c40f45cd3dddf4c535"] ],
+    "prereq" : [ [ "6407d6c40f45cd3dddf4c533" ], [ "6407d6c40f45cd3dddf4c534" ] ]
+  }
+]
