@@ -3,6 +3,8 @@ package edu.illinois.cs.iplanner.service;
 import java.io.*;
 import java.util.*;
 
+import org.springframework.lang.Nullable;
+
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -16,10 +18,23 @@ public class ServiceCSVtoJSON {
         ServiceCSVtoJSON converter = new ServiceCSVtoJSON();
         converter.parse(csvInputPath, jsonOuputPath);
     }
+    /**
+     * 
+     * @param csvInpString  source file path
+     * @return an ArrayNode containing all needed info about courses
+     * @throws Exception
+     */
     public ArrayNode parse(String csvInpString) throws Exception {
         return parse(csvInpString, null);
     }
-    public ArrayNode parse(String csvInputPath, String jsonOuputPath) throws Exception {
+    /**
+     * 
+     * @param csvInputPath  source file path
+     * @param jsonOuputPath output file path, Nullable
+     * @return an ArrayNode containing all needed info about courses
+     * @throws Exception
+     */
+    public ArrayNode parse(String csvInputPath, @Nullable String jsonOuputPath) throws Exception {
         //Lists to store related info
         List<Integer> credits = new ArrayList<>();
         List<String> sameAS = new ArrayList<>();
