@@ -30,7 +30,7 @@ public class CourseController {
     DataLoadService dataLoadService;
 
     @GetMapping("/load-data")
-    public List<CourseDTO> loadData() throws IOException {
+    public List<CourseDTO> loadData() throws Exception {
         return dataLoadService.convertJsonObjToCourseDTOs("C:/Users/Edwardhzh/Desktop/CS 222/course-project-iplanner/backend/data/2023-sp.csv");
     }
 

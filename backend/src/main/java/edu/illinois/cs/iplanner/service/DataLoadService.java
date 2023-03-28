@@ -7,16 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.bson.types.ObjectId;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import edu.illinois.cs.iplanner.dao.CourseDAO;
 import edu.illinois.cs.iplanner.model.CourseDTO;
@@ -27,10 +25,10 @@ public class DataLoadService {
     @Autowired
     CourseDAO courseDAO;
 
-    public  List<CourseDTO> convertJsonObjToCourseDTOs() throws StreamReadException, DatabindException, IOException {
+    public  List<CourseDTO> convertJsonObjToCourseDTOs(String csvInpString) throws Exception {
+        ServiceCSVtoJSON serviceCSVtoJSON = new ServiceCSVtoJSON();
         List<CourseDTO> courses = new ArrayList<CourseDTO>();
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<JsonNode> jsonNodes = objectMapper.readValue(new File("C:/Users/Edwardhzh/Desktop/CS 222/course-project-iplanner/backend/data/2023-sp.json"), new TypeReference<List<JsonNode>>() {});
+        ArrayNode jsonNodes = serviceCSVtoJSON.parse(csvInpString);
         List<CourseDTO> database = courseDAO.findAll();
 
         Map<String, String> hashtable = new HashMap<>();
