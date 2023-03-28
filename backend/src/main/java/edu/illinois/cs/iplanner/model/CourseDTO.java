@@ -23,7 +23,7 @@ public class CourseDTO {
 
     private String title;
 
-    private Integer credit;
+    private List<Integer> credit;
 
     private List<List<String>> prereq;
 
