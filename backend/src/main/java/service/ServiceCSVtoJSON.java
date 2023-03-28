@@ -13,29 +13,31 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.*;
 
-public class Service_csv_to_json {
-    private static String csvInputPath = "./backend/data/2023-sp.csv";
-    private static String jsonOuputPath = "./backend/data/2023-sp.json";
-    private static List<String> sameAS = new ArrayList<>();
-    private static List<String> equivalent = new ArrayList<>();
-    private static List<List<String>> prerequisite = new ArrayList<>();
-    private static List<String> concurrent = new ArrayList<>();
-    private static String lastCourse = "-";                     //this String should be removed when sections of a course are included
-
+public class ServiceCSVtoJSON {
     public static void main(String[] args) throws Exception {
+        String csvInputPath = "./backend/data/2023-sp.csv";
+        String jsonOuputPath = "./backend/data/2023-sp.json";
+        parse(csvInputPath, jsonOuputPath);
+    }
+
+    public static void parse(String csvInputPath, String jsonOuputPath) throws Exception {
+        //Lists to store related info
+        List<String> sameAS = new ArrayList<>();
+        List<String> equivalent = new ArrayList<>();
+        List<List<String>> prerequisite = new ArrayList<>();
+        List<String> concurrent = new ArrayList<>();
+        String lastCourse = "-";                     //this String should be removed when sections of a course are included
+
         int count = 0;
         int identicalCount = 0;
-
+        //CSV and JSON setup
         ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         CsvMapper csvMapper = new CsvMapper();
-
         CsvSchema csvSchema = CsvSchema.emptySchema().withHeader();
         List<Object> csvData = csvMapper.readerFor(Map.class).with(csvSchema).readValues(new File(csvInputPath)).readAll();
-        
         JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
-
         Map<String, ObjectNode> itemNodes = new HashMap<>();
-        
+        //read from CSV line by line
         for (Object object_row : csvData) {
             count++;
             Map<String, String> row = (Map<String, String>) object_row;
@@ -48,27 +50,23 @@ public class Service_csv_to_json {
             identicalCount++;
             lastCourse = subject + number;
 
-            String title = row.get("Name");
-            String credit = row.get("Credit Hours");
-            
+            //empty info lists for each iteration
             sameAS.clear();
             equivalent.clear();
             prerequisite.clear();
             concurrent.clear();
-
-            updateINFO(row.get("Section Info").split("\\."));
-
+            //update info lists
+            updateINFO(row.get("Section Info").split("\\."), sameAS, equivalent, prerequisite, concurrent);
+            //Create and update a node to store all info needed for json
             ObjectNode itemNode = jsonFactory.objectNode();
             itemNode.put("subject", subject);
             itemNode.put("number", number);
-            itemNode.put("title", title);
-            itemNode.put("credit", credit);
-
+            itemNode.put("title", row.get("Name"));
+            itemNode.put("credit", row.get("Credit Hours"));
             ArrayNode same = objectMapper.createArrayNode();
             ArrayNode prereq = objectMapper.createArrayNode();
             ArrayNode concur = objectMapper.createArrayNode();
             ArrayNode equiv = objectMapper.createArrayNode();
-            
             for (String course : sameAS) {
                 same.add(course);
             }
@@ -84,41 +82,39 @@ public class Service_csv_to_json {
                     subNode.add(prep);
                 }
             }
-            
             itemNode.set("same", same);
             itemNode.set("equiv", equiv);
             itemNode.set("concur", concur);
             itemNode.set("prereq", prereq);
-            
-
             String key = subject + number;
             itemNodes.put(key, itemNode);
         }
-
+        //Convert to JSON
         ArrayNode rootArray = jsonFactory.arrayNode();
         for (ObjectNode itemNode : itemNodes.values()) {
             rootArray.add(itemNode);
         }
         objectMapper.writeValue(new File(jsonOuputPath), rootArray);
+        //Test info
         System.out.println("conversation finished:\t" + count + " tasks has completed, with " + identicalCount + " identical courses");
         System.out.println("The output file can be found at:\n\t" + jsonOuputPath);
     }
 
     //update prereq, concur, etc to static lists 
-    private static void updateINFO(String[] infos) {
+    private static void updateINFO(String[] infos, List<String> sameAS, List<String> equivalent, List<List<String>> prerequisite, List<String> concurrent) {
         for (String info : infos) {
             info = info.trim();
             try {
                 if (info.startsWith("Prerequisite:")) {
-                    updatePRECON(info.split(" "));
+                    updatePRECON(info.split(" "), prerequisite, concurrent);
                     continue;
                 }
                 if (info.startsWith("Same as")) {
-                    updateSAMEAS(info.split(" "));
+                    updateSAMEAS(info.split(" "), sameAS);
                     continue;
                 }
                 if (info.startsWith("Credit is not given")) {
-                    updateEQV(info.split(" "));
+                    updateEQV(info.split(" "), equivalent);
                     continue;
                 }
             } catch (Exception e) {
@@ -126,8 +122,8 @@ public class Service_csv_to_json {
             }
         }
     }
-
-    private static void updatePRECON(String[] words) {
+    //helper funtion to generate course prerequisites and concurrents
+    private static void updatePRECON(String[] words, List<List<String>> prerequisite, List<String> concurrent) {
         List<String> courses = new ArrayList<>();
         int which_list = 1;    //1 when to prereq
         boolean push = false;   //true when should push to list
@@ -172,8 +168,8 @@ public class Service_csv_to_json {
             }
         }
     }
-
-    private static void updateSAMEAS(String[] words) {
+    //helper funtion to generate courses that are the same
+    private static void updateSAMEAS(String[] words, List<String> sameAS) {
         for (int i = 1; i < words.length; i++) {
             try {
                 Integer.parseInt(words[i]);
@@ -184,8 +180,8 @@ public class Service_csv_to_json {
             }
         }
     }
-
-    private static void updateEQV(String[] words) {
+    //helper funtion to generate equivalent courses
+    private static void updateEQV(String[] words, List<String> equivalent) {
         for (int i = 1; i < words.length; i++) {
             try {
                 Integer.parseInt(words[i]);
