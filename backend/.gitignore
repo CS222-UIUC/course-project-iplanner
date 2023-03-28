@@ -34,3 +34,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### testing files ###
+backend/data/2023-sp-tiny.csv
+backend/pom.xml
