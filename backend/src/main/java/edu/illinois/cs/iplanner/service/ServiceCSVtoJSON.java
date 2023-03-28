@@ -13,11 +13,15 @@ public class ServiceCSVtoJSON {
     public static void main(String[] args) throws Exception {
         String csvInputPath = "./backend/data/2023-sp.csv";
         String jsonOuputPath = "./backend/data/2023-sp.json";
-        parse(csvInputPath, jsonOuputPath);
+        ServiceCSVtoJSON converter = new ServiceCSVtoJSON();
+        converter.parse(csvInputPath, jsonOuputPath);
     }
-
-    public static void parse(String csvInputPath, String jsonOuputPath) throws Exception {
+    public ArrayNode parse(String csvInpString) throws Exception {
+        return parse(csvInpString, null);
+    }
+    public ArrayNode parse(String csvInputPath, String jsonOuputPath) throws Exception {
         //Lists to store related info
+        List<Integer> credits = new ArrayList<>();
         List<String> sameAS = new ArrayList<>();
         List<String> equivalent = new ArrayList<>();
         List<List<String>> prerequisite = new ArrayList<>();
@@ -47,22 +51,30 @@ public class ServiceCSVtoJSON {
             lastCourse = subject + number;
 
             //empty info lists for each iteration
+            credits.clear();
             sameAS.clear();
             equivalent.clear();
             prerequisite.clear();
             concurrent.clear();
             //update info lists
             updateINFO(row.get("Section Info").split("\\."), sameAS, equivalent, prerequisite, concurrent);
+            //update course credits
+            // System.out.println(row.get("Credit Hours"));
+            updateCredits(row.get("Credit Hours").split(" "), credits);
             //Create and update a node to store all info needed for json
             ObjectNode itemNode = jsonFactory.objectNode();
             itemNode.put("subject", subject);
             itemNode.put("number", number);
             itemNode.put("title", row.get("Name"));
-            itemNode.put("credit", row.get("Credit Hours"));
+            // itemNode.put("credit", row.get("Credit Hours"));
+            ArrayNode credit = objectMapper.createArrayNode();
             ArrayNode same = objectMapper.createArrayNode();
             ArrayNode prereq = objectMapper.createArrayNode();
             ArrayNode concur = objectMapper.createArrayNode();
             ArrayNode equiv = objectMapper.createArrayNode();
+            for (Integer c : credits) {
+                credit.add(c);
+            }
             for (String course : sameAS) {
                 same.add(course);
             }
@@ -78,6 +90,7 @@ public class ServiceCSVtoJSON {
                     subNode.add(prep);
                 }
             }
+            itemNode.set("credit", credit);
             itemNode.set("same", same);
             itemNode.set("equiv", equiv);
             itemNode.set("concur", concur);
@@ -90,14 +103,19 @@ public class ServiceCSVtoJSON {
         for (ObjectNode itemNode : itemNodes.values()) {
             rootArray.add(itemNode);
         }
-        objectMapper.writeValue(new File(jsonOuputPath), rootArray);
+        
         //Test info
-        System.out.println("conversation finished:\t" + count + " tasks has completed, with " + identicalCount + " identical courses");
-        System.out.println("The output file can be found at:\n\t" + jsonOuputPath);
+        System.out.println("conversation completed:\t" + count + " tasks has completed, with " + identicalCount + " identical courses");
+        if (jsonOuputPath != null) {
+            objectMapper.writeValue(new File(jsonOuputPath), rootArray);
+            System.out.println("The output file can be found at:\n\t" + jsonOuputPath);
+        }
+
+        return rootArray;
     }
 
     //update prereq, concur, etc to static lists 
-    private static void updateINFO(String[] infos, List<String> sameAS, List<String> equivalent, List<List<String>> prerequisite, List<String> concurrent) {
+    private void updateINFO(String[] infos, List<String> sameAS, List<String> equivalent, List<List<String>> prerequisite, List<String> concurrent) {
         for (String info : infos) {
             info = info.trim();
             try {
@@ -119,7 +137,7 @@ public class ServiceCSVtoJSON {
         }
     }
     //helper funtion to generate course prerequisites and concurrents
-    private static void updatePRECON(String[] words, List<List<String>> prerequisite, List<String> concurrent) {
+    private void updatePRECON(String[] words, List<List<String>> prerequisite, List<String> concurrent) {
         List<String> courses = new ArrayList<>();
         int which_list = 1;    //1 when to prereq
         boolean push = false;   //true when should push to list
@@ -165,7 +183,7 @@ public class ServiceCSVtoJSON {
         }
     }
     //helper funtion to generate courses that are the same
-    private static void updateSAMEAS(String[] words, List<String> sameAS) {
+    private void updateSAMEAS(String[] words, List<String> sameAS) {
         for (int i = 1; i < words.length; i++) {
             try {
                 Integer.parseInt(words[i]);
@@ -177,7 +195,7 @@ public class ServiceCSVtoJSON {
         }
     }
     //helper funtion to generate equivalent courses
-    private static void updateEQV(String[] words, List<String> equivalent) {
+    private void updateEQV(String[] words, List<String> equivalent) {
         for (int i = 1; i < words.length; i++) {
             try {
                 Integer.parseInt(words[i]);
@@ -188,5 +206,26 @@ public class ServiceCSVtoJSON {
             }
         }
     }
-
+    //helper funtion to parse course credits
+    private void updateCredits(String[] arr, List<Integer> credits) {
+        try {
+            if (arr.length == 0) return;
+            if (arr.length == 2) {
+                credits.add(Integer.parseInt(arr[0]));
+                return;
+            }
+            Integer left = Integer.parseInt(arr[0]);
+            Integer right = Integer.parseInt(arr[2]);
+            if (arr[1].toUpperCase().equals("OR")) {
+                credits.add(left);
+                credits.add(right);
+            } else {
+                for (; left <= right; left++) {
+                    credits.add(left);
+                }
+            }
+        } catch (Exception e) {
+            return;
+        }
+    }
 }
