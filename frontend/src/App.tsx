@@ -17,19 +17,21 @@ export interface Course {
   subject: string,
   number: string,
   title: string,
-  credit: number
+  credit: number,
   equiv: string[],
   concur: string[][],
-  prereq: string[][]
+  prereq: string[][],
+  subseq: string[][]
 }
 
 interface CardCtxType {
   cardStates: Record<string, CardState>,
   cardDispatch: Dispatch<CardAction>
 };
+
 const emptyCardCtxType: CardCtxType = {
   cardStates: {},
-  cardDispatch: (arg: CardAction) => {}
+  cardDispatch: (arg: CardAction) => { }
 };
 export const CardCtx = createContext(emptyCardCtxType);
 export const CourseCtx = createContext<Course[]>([]);
