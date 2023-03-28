@@ -25,7 +25,7 @@ public class DataLoadService {
     @Autowired
     CourseDAO courseDAO;
 
-    public  List<CourseDTO> convertJsonObjToCourseDTOs(String csvInpString) throws Exception {
+    public List<CourseDTO> convertJsonObjToCourseDTOs(String csvInpString) throws Exception {
         ServiceCSVtoJSON serviceCSVtoJSON = new ServiceCSVtoJSON();
         List<CourseDTO> courses = new ArrayList<CourseDTO>();
         ArrayNode jsonNodes = serviceCSVtoJSON.parse(csvInpString);
