@@ -19,9 +19,9 @@ export interface Course {
   title: string,
   credit: number,
   equiv: string[],
-  concur: string[][],
-  prereq: string[][],
-  subseq: string[][]
+  concur: string[],
+  prereq: string[],
+  subseq: string[]
 }
 
 interface CardCtxType {
