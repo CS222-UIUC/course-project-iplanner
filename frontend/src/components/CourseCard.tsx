@@ -1,4 +1,5 @@
 import { CardCtx, Course, CourseCtx } from "../App";
+import "./CourseCard.css";
 
 import Card from 'react-bootstrap/Card';
 import { MouseEvent, useContext } from "react";
@@ -50,18 +51,15 @@ function CourseCard({ course }: { course: Course }) {
 
   return (
     <div>
-      <Card key={course.id} className="shadow fs-6" onMouseEnter={calcRelations} onMouseLeave={clearRelations}>
+      <Card key={course.id} className={"shadow fs-6 " + cardStates[course.id]?.relation?.toLowerCase()}
+            onMouseEnter={calcRelations} onMouseLeave={clearRelations}>
         <Card.Body>
           {`${course.subject} ${course.number}`}<br />{course.title}
         </Card.Body>
         {
+          // searched icon on top-right of card
           cardStates[course.id]?.searched ?
             (<Search style={{ position: "absolute", top: "10px", right: "10px" }} className="text-primary" />) :
-            null
-        }
-        {
-          cardStates[course.id]?.relation !== "none" ?
-            (<div style={{ position: "absolute", bottom: "10px", right: "20px" }}>{cardStates[course.id]?.relation}</div>) :
             null
         }
       </Card>
