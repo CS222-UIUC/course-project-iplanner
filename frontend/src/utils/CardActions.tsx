@@ -6,13 +6,15 @@ import { CardCtx } from "../App";
 // current selected course | no relation
 type Relation = "prechn" | "prereq" | "concur" | "subseq" | "equiv" | "curr" | "none";
 export interface CardState {
-  relation: Relation,
-  searched: boolean
+  relation: Relation, // if this course has a relation to / is the hovered course
+  searched: boolean, // if this course matches the search input
+  missing: Array<string>, // missing prereqs/concur courses id
 }
 
 export interface CardAction {
   id: string,
-  type: string
+  type: string,
+  missing?: Array<String>, // optional arg for missing prereq/concur chain
 }
 
 // Handles different CardActions and changes corresponding cardStates.
@@ -47,6 +49,8 @@ export function cardReducer(cardStates: Record<string, CardState>, action: CardA
       return update(cardStates, action.id, "relation", "curr");
     case 'RELATION_NONE':
       return update(cardStates, action.id, "relation", "none");
+    case 'MISSING_SET':
+      return update(cardStates, action.id, "missing", action.missing);
     default:
       return cardStates;
   }
@@ -83,12 +87,20 @@ function useCardActions() {
       type: "RELATION_NONE"
     })
   }
+  const setMissing = (id: string, missing: Array<String>) => {
+    cardDispatch({
+      id,
+      type: "MISSING_SET",
+      missing
+    })
+  };
 
   return {
     setSearch,
     clearSearch,
     setRelation,
-    clearRelation
+    clearRelation,
+    setMissing,
   }
 }
 

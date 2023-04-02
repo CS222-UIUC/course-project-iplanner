@@ -34,15 +34,18 @@ const emptyCardCtxType: CardCtxType = {
   cardDispatch: (arg: CardAction) => { }
 };
 export const CardCtx = createContext(emptyCardCtxType);
-export const CourseCtx = createContext<Course[]>([]);
+export const CourseCtx = createContext<Record<string, Course>>({});
 
 function App() {
   const [cardStates, cardDispatch] = useReducer(cardReducer, {});
-  const [allCourses, setAllCourses] = useState<Course[]>([]);
+  const [allCourses, setAllCourses] = useState<Record<string, Course>>({});
 
   // Execute on mount
   useEffect(() => {
-    setAllCourses(data);
+    setAllCourses(data.reduce((dict: Record<string, Course>, course: Course) => {
+      dict[course.id] = course;
+      return dict;
+    }, {}));
   }, []);
 
   return (

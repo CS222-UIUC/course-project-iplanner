@@ -3,13 +3,14 @@ import "./CourseCard.css";
 
 import Card from 'react-bootstrap/Card';
 import { MouseEvent, useContext } from "react";
-import { Search } from 'react-bootstrap-icons';
+import { Search, XSquare } from 'react-bootstrap-icons';
 import useCardActions from "../utils/CardActions";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 function CourseCard({ course }: { course: Course }) {
   const { cardStates } = useContext(CardCtx);
   const allCourses = useContext(CourseCtx);
-  const { setRelation, clearRelation } = useCardActions();
+  const { setRelation, clearRelation, setMissing } = useCardActions();
 
   // Use allCourses to determine relations. prereq|concur|equiv are provided.
   // Calculate prerequisite chain (prechn). Also set the current hovered course
@@ -18,7 +19,7 @@ function CourseCard({ course }: { course: Course }) {
     const queue = [course.id];
     while (queue.length !== 0) {
       const cId = queue.shift()!;
-      const cCourse = allCourses.find((c) => c.id === cId)!;
+      const cCourse = allCourses[cId];
       for (const Ids of cCourse.prereq) {
         queue.push(Ids);
         setRelation(Ids, "prechn");
@@ -40,14 +41,32 @@ function CourseCard({ course }: { course: Course }) {
       setRelation(itr, "subseq");
     }
     setRelation(course.id, "curr");
+
+    // TODO Anant: check if all prereq/concur is present in plan
+    // if not, setMissing(course.id, [ all missing courses's id ]);
   };
 
   // Set all course's relation to "none".
   const clearRelations = (event: MouseEvent) => {
-    for (const iterator of allCourses) {
+    // TODO Anant: reimplement clearRelations in more efficient way.
+    // Note "allCourses" is changed to a dictionary typed <string -> Course>.
+    for (const iterator of Object.values(allCourses)) {
       clearRelation(iterator.id);
     }
-  }
+  };
+
+  const missingTooltip = (courseId: string) => {
+    return (
+      <Tooltip>
+        {
+          cardStates[courseId].missing?.reduce((msg: string, courseId: string) => {
+            const course = allCourses[courseId];
+            return course ? msg + `${course.subject} ${course.number} ` : msg;
+          }, "Missing requirement(s):")
+        }
+      </Tooltip>
+    );
+  };
 
   return (
     <div>
@@ -56,12 +75,25 @@ function CourseCard({ course }: { course: Course }) {
         <Card.Body>
           {`${course.subject} ${course.number}`}<br />{course.title}
         </Card.Body>
+        <div style={{ position: "absolute", bottom: "10px", right: "10px" }}>
         {
           // searched icon on top-right of card
           cardStates[course.id]?.searched ?
-            (<Search style={{ position: "absolute", top: "10px", right: "10px" }} className="text-primary" />) :
+            (<Search className="text-primary" />) :
             null
         }
+        </div>
+        <div style={{ position: "absolute", top: "10px", right: "10px" }}>
+          {
+            cardStates[course.id]?.missing?.length > 0 ?
+              (
+                <OverlayTrigger overlay={missingTooltip(course.id)}>
+                  <XSquare className="text-danger"/>
+                </OverlayTrigger>
+              ) :
+              null
+          }
+        </div>
       </Card>
     </div>
   )
