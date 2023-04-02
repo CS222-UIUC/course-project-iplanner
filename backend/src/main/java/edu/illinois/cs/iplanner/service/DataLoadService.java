@@ -2,6 +2,10 @@ package edu.illinois.cs.iplanner.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,7 +13,10 @@ import org.bson.types.ObjectId;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -89,7 +96,7 @@ public class DataLoadService {
         }
 
         for (CourseDTO course : courses) {
-
+            
             List<List<String>> prereq = course.getPrereq();
             List<List<String>> newPrereq = new ArrayList<>();
             for (List<String> subList : prereq) {
@@ -122,8 +129,62 @@ public class DataLoadService {
             }
             course.setEquiv(newEquiv);
         }
+        calculateSubseq(courses, hashtable);
         courseDAO.saveAll(courses);
         return courses;
+    }
+
+    public void calculateSubseq(List<CourseDTO> courses, Map<String, String> hashtable) {
+        for (CourseDTO course : courses) {
+            List<String> subseqCourses= calculateSubseqHelper(courses, hashtable, course);
+            course.setSubseq(subseqCourses);
+        }
+    }
+
+    public List<String> calculateSubseqHelper(List<CourseDTO> courses, Map<String, String> hashtable, CourseDTO course) {
+        List<String> subsequentCourses = new ArrayList<>();
+        Queue<String> queue = new LinkedList<>();
+        Map<String, Boolean> visited = new HashMap<>();
+        for (CourseDTO c : courses) {
+            visited.put(c.getId(), false);
+        }
+
+        queue.add(hashtable.get(course.getSubject() + " " + course.getNumber()));
+        visited.put(course.getId(), true);
+        while (!queue.isEmpty()) {
+            String currentCourse = queue.remove();
+            subsequentCourses.add(currentCourse);
+            for (CourseDTO nextcourse : courses) {
+                if (nextcourse.getPrereq().stream().anyMatch(list -> list.contains(currentCourse))) {
+                    if (visited.get(nextcourse.getId()) == false) {
+                        queue.add(nextcourse.getId());
+                        visited.put(nextcourse.getId(), true);
+                    }
+                }
+            }
+        }
+        subsequentCourses.remove(0);
+
+        // Avoiding Duplicate Subseq Course
+        Set<String> uniqueSubsequentCourses = new HashSet<>(subsequentCourses);
+
+        // Convert CourseId to Course Subject+Name (For Testing & Sorting purpose)
+        List<String> temp = new ArrayList<>();
+        for (Entry<String, String> e : hashtable.entrySet()) {
+            if (uniqueSubsequentCourses.contains(e.getValue())) {
+                temp.add(e.getKey());
+            }
+        }
+
+        // Sorting in alphbet order
+        Collections.sort(temp);
+
+        // Convert back to CourseIds
+        subsequentCourses.clear();
+        for (String t : temp) {
+            subsequentCourses.add(hashtable.get(t));
+        }
+        return subsequentCourses;
     }
 
     public void resetDatabase() throws StreamReadException, DatabindException, IOException {

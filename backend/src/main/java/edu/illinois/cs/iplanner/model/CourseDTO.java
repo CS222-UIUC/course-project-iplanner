@@ -28,6 +28,8 @@ public class CourseDTO {
     private List<List<String>> prereq;
 
     private List<List<String>> concur;
+    
+    private List<String> subseq;
 
     private List<String> equiv;
 
