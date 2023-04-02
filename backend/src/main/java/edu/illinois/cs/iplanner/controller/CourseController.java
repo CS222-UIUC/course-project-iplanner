@@ -2,14 +2,21 @@ package edu.illinois.cs.iplanner.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+
+
 import edu.illinois.cs.iplanner.dao.CourseDAO;
 import edu.illinois.cs.iplanner.model.CourseDTO;
+import edu.illinois.cs.iplanner.service.DataLoadService;
 import edu.illinois.cs.iplanner.vo.CourseViewVO;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -19,6 +26,19 @@ public class CourseController {
     @Autowired
     CourseDAO courseDAO;
 
+    @Autowired
+    DataLoadService dataLoadService;
+
+    @GetMapping("/load-data")
+    public List<CourseDTO> loadData() throws Exception {
+        return dataLoadService.convertJsonObjToCourseDTOs("C:/Users/Edwardhzh/Desktop/CS 222/course-project-iplanner/backend/data/2023-sp.csv");
+    }
+
+    @GetMapping("/reset-data")
+    public void deleteData() throws IOException {
+        dataLoadService.resetDatabase();
+    }
+    
     @RequestMapping("/") // Returns a list of all courses
     public List<CourseViewVO> getAllCourses() {
         List<CourseDTO> courses = courseDAO.findAll();
@@ -64,6 +84,9 @@ public class CourseController {
     public CourseDTO getCourseInfo(@PathVariable(name = "subject_name") String subject_name, @PathVariable(name = "number") String number) {
         List<CourseDTO> getDesiredCourse = getCoursesFromSubjectX(subject_name);
         getDesiredCourse.removeIf(course->(!course.getNumber().equals(number)));
+        if (getDesiredCourse.size() == 0) {
+            return new CourseDTO();
+        }
         return getDesiredCourse.get(0);
     }
 }
