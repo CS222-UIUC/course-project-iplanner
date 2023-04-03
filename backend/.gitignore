@@ -36,5 +36,5 @@ build/
 .vscode/
 
 ### testing files ###
-backend/data/
-backend/pom.xml
+/backend/data/
+/backend/pom.xml

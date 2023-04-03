@@ -12,12 +12,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.*;
 
 public class ServiceCSVtoJSON {
-    public static void main(String[] args) throws Exception {
-        String csvInputPath = "./backend/data/2023-sp.csv";
-        String jsonOuputPath = "./backend/data/2023-sp.json";
-        ServiceCSVtoJSON converter = new ServiceCSVtoJSON();
-        converter.parse(csvInputPath, jsonOuputPath);
-    }
     /**
      * 
      * @param csvInpString  source file path
