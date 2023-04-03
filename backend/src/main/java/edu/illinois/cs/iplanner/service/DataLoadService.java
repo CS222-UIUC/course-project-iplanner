@@ -129,19 +129,16 @@ public class DataLoadService {
             }
             course.setEquiv(newEquiv);
         }
-        calculateSubseq(courses, hashtable);
+        // Calculate Subseqs
+        for (CourseDTO course : courses) {
+            List<String> subseqCourses= calculateSubseq(courses, hashtable, course);
+            course.setSubseq(subseqCourses);
+        }
         courseDAO.saveAll(courses);
         return courses;
     }
 
-    public void calculateSubseq(List<CourseDTO> courses, Map<String, String> hashtable) {
-        for (CourseDTO course : courses) {
-            List<String> subseqCourses= calculateSubseqHelper(courses, hashtable, course);
-            course.setSubseq(subseqCourses);
-        }
-    }
-
-    public List<String> calculateSubseqHelper(List<CourseDTO> courses, Map<String, String> hashtable, CourseDTO course) {
+    public List<String> calculateSubseq(List<CourseDTO> courses, Map<String, String> hashtable, CourseDTO course) {
         List<String> subsequentCourses = new ArrayList<>();
         Queue<String> queue = new LinkedList<>();
         Map<String, Boolean> visited = new HashMap<>();
