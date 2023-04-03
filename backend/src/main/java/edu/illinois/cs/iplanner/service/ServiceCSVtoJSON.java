@@ -12,12 +12,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.*;
 
 public class ServiceCSVtoJSON {
-    public static void main(String[] args) throws Exception {
-        String csvInputPath = "./backend/data/2023-sp.csv";
-        String jsonOuputPath = "./backend/data/2023-sp.json";
-        ServiceCSVtoJSON converter = new ServiceCSVtoJSON();
-        converter.parse(csvInputPath, jsonOuputPath);
-    }
     /**
      * 
      * @param csvInpString  source file path
@@ -120,7 +114,7 @@ public class ServiceCSVtoJSON {
         }
         
         //Test info
-        System.out.println("conversation completed:\t" + count + " tasks has completed, with " + identicalCount + " identical courses");
+        // System.out.println("conversation completed:\t" + count + " tasks has completed, with " + identicalCount + " identical courses");
         if (jsonOuputPath != null) {
             objectMapper.writeValue(new File(jsonOuputPath), rootArray);
             System.out.println("The output file can be found at:\n\t" + jsonOuputPath);

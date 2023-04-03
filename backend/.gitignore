@@ -36,5 +36,5 @@ build/
 .vscode/
 
 ### testing files ###
-backend/data/2023-sp-tiny.csv
-backend/pom.xml
+/data/
+*.json
