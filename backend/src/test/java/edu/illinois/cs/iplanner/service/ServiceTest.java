@@ -1,4 +1,4 @@
-package edu.illinois.service;
+package edu.illinois.cs.iplanner.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -8,8 +8,8 @@ import edu.illinois.cs.iplanner.service.ServiceCSVtoJSON;
 public class ServiceTest {
     public static void main(String[] args) throws Exception {
         System.out.println("===== Tester Starts =====");
-        String csvInputPath = "./backend/src/test/java/edu/illinois/data/csv-json-input.csv";
-        String jsonOuputPath = "./backend/src/test/java/edu/illinois/data/csv-json-output.json";
+        String csvInputPath = "./backend/src/test/java/edu/illinois/cs/iplanner/data/csv-json-input.csv";
+        String jsonOuputPath = "./backend/src/test/java/edu/illinois/cs/iplanner/data/csv-json-output.json";
         ServiceCSVtoJSON converter = new ServiceCSVtoJSON();
         ArrayNode nodes = converter.parse(csvInputPath);
         // ArrayNode nodes = converter.parse(csvInputPath, jsonOuputPath);
