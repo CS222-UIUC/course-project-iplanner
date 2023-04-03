@@ -114,7 +114,7 @@ public class ServiceCSVtoJSON {
         }
         
         //Test info
-        System.out.println("conversation completed:\t" + count + " tasks has completed, with " + identicalCount + " identical courses");
+        // System.out.println("conversation completed:\t" + count + " tasks has completed, with " + identicalCount + " identical courses");
         if (jsonOuputPath != null) {
             objectMapper.writeValue(new File(jsonOuputPath), rootArray);
             System.out.println("The output file can be found at:\n\t" + jsonOuputPath);
