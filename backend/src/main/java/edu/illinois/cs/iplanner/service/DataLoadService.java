@@ -183,6 +183,19 @@ public class DataLoadService {
         }
         return subsequentCourses;
     }
+    public String semePatternDetec(List<String> semesters) {
+        Set<String> patterns = new HashSet<>();
+        for (String semester : semesters) {
+            patterns.add(semester.substring(4));
+        }
+        List<String> list = new ArrayList<String>(patterns);
+        if (list.size() == 1 && list.get(0).equals("Spring")) {
+            return "Spring Semester Only";
+        } else if (list.size() == 1 && list.get(0).equals("Fall")) {
+            return "Fall Semester Only";
+        }
+        return "Both Spring and Fall Semester";
+    }
 
     public void resetDatabase() throws StreamReadException, DatabindException, IOException {
         courseDAO.deleteAll();
