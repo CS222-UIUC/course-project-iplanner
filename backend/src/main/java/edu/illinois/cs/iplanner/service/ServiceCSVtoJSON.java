@@ -34,7 +34,7 @@ public class ServiceCSVtoJSON {
         List<String> sameAS = new ArrayList<>();
         List<String> equivalent = new ArrayList<>();
         List<List<String>> prerequisite = new ArrayList<>();
-        List<String> concurrent = new ArrayList<>();
+        List<List<String>> concurrent = new ArrayList<>();
         String lastCourse = "-";                     //this String should be removed when sections of a course are included
 
         int count = 0;
@@ -90,8 +90,11 @@ public class ServiceCSVtoJSON {
             for (String course : equivalent) {
                 equiv.add(course);
             }
-            for (String course : concurrent) {
-                concur.add(course);
+            for (List<String> concurrs : concurrent) {
+                ArrayNode subNode = concur.addArray();
+                for (String concurr : concurrs) {
+                    subNode.add(concurr);
+                }
             }
             for (List<String> preps : prerequisite) {
                 ArrayNode subNode = prereq.addArray();
@@ -124,7 +127,7 @@ public class ServiceCSVtoJSON {
     }
 
     //update prereq, concur, etc to static lists 
-    private void updateINFO(String[] infos, List<String> sameAS, List<String> equivalent, List<List<String>> prerequisite, List<String> concurrent) {
+    private void updateINFO(String[] infos, List<String> sameAS, List<String> equivalent, List<List<String>> prerequisite, List<List<String>> concurrent) {
         for (String info : infos) {
             info = info.trim();
             try {
@@ -146,7 +149,7 @@ public class ServiceCSVtoJSON {
         }
     }
     //helper funtion to generate course prerequisites and concurrents
-    private void updatePRECON(String[] words, List<List<String>> prerequisite, List<String> concurrent) {
+    private void updatePRECON(String[] words, List<List<String>> prerequisite, List<List<String>> concurrent) {
         List<String> courses = new ArrayList<>();
         int which_list = 1;    //1 when to prereq
         boolean push = false;   //true when should push to list
@@ -156,6 +159,14 @@ public class ServiceCSVtoJSON {
                 which_list = 0;
                 continue;
             }
+            //handle special case:
+            //requiring multiple concurrent courses, such as CEE 537
+            if (which_list == 0 && word.equals("and")) {
+                concurrent.add(new ArrayList<>());
+                concurrent.get(concurrent.size() - 1).addAll(courses);
+                courses.clear();
+                continue;
+            }
             if (word.endsWith(";")) {                             //erase course number when it is the last element of the array
                 push = true;
                 word = word.substring(0, word.length() - 1);
@@ -163,7 +174,6 @@ public class ServiceCSVtoJSON {
             if (word.endsWith(",")) {
                 word = word.substring(0, word.length() - 1);
             }
-
             try {
                 Integer.parseInt(word);
                 String course = words[i - 1] + " " + word;
@@ -175,7 +185,8 @@ public class ServiceCSVtoJSON {
                     prerequisite.add(new ArrayList<>());
                     prerequisite.get(prerequisite.size() - 1).addAll(courses);
                 } else {
-                    concurrent.addAll(courses);
+                    concurrent.add(new ArrayList<>());
+                    concurrent.get(concurrent.size() - 1).addAll(courses);
                     which_list = 1;
                 }
                 push = false;
@@ -187,7 +198,9 @@ public class ServiceCSVtoJSON {
                 prerequisite.add(new ArrayList<>());
                 prerequisite.get(prerequisite.size() - 1).addAll(courses);
             } else {
-                concurrent.addAll(courses);
+                // concurrent.addAll(courses);
+                concurrent.add(new ArrayList<>());
+                concurrent.get(concurrent.size() - 1).addAll(courses);
             }
         }
     }
