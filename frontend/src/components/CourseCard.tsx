@@ -1,13 +1,15 @@
 import { CardCtx, Course, CourseCtx } from "../App";
 import "./CourseCard.css";
-
+import { useRef } from 'react';
 import Card from 'react-bootstrap/Card';
-import { MouseEvent, useContext } from "react";
+import { MouseEvent, useContext} from "react";
+import {findMissing} from "./PlanTable";
 import { Search, XSquare } from 'react-bootstrap-icons';
 import useCardActions from "../utils/CardActions";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 function CourseCard({ course }: { course: Course }) {
+  const augmented = useRef<string[]>([]);
   const { cardStates } = useContext(CardCtx);
   const allCourses = useContext(CourseCtx);
   const { setRelation, clearRelation, setMissing } = useCardActions();
@@ -16,43 +18,54 @@ function CourseCard({ course }: { course: Course }) {
   // Calculate prerequisite chain (prechn). Also set the current hovered course
   // to "curr". Use setRelation(course_id, relation) to set the relations.
   const calcRelations = (event: MouseEvent) => {
+    let prechn: string[] = [];
     const queue = [course.id];
+
     while (queue.length !== 0) {
       const cId = queue.shift()!;
       const cCourse = allCourses[cId];
+
       for (const Ids of cCourse.prereq) {
         queue.push(Ids);
         setRelation(Ids, "prechn");
+        augmented.current.push(Ids);
+        prechn.push(Ids);
       }
     }
+
     for (const itr of course.equiv) {
       setRelation(itr, "equiv");
+      augmented.current.push(itr);
     }
     for (const itr of course.concur) {
       setRelation(itr, "concur");
+      augmented.current.push(itr);
     }
     for (const itr of course.prereq) {
       setRelation(itr, "prereq");
     }
     for (const itr of course.equiv) {
       setRelation(itr, "equiv");
+      augmented.current.push(itr);
     }
     for (const itr of course.subseq) {
       setRelation(itr, "subseq");
+      augmented.current.push(itr);
     }
     setRelation(course.id, "curr");
+    augmented.current.push(course.id);
 
-    // TODO Anant: check if all prereq/concur is present in plan
-    // if not, setMissing(course.id, [ all missing courses's id ]);
+    // TODO: Update to call whenever allCourses changes
+    setMissing(course.id,findMissing(course,prechn)); 
   };
 
   // Set all course's relation to "none".
   const clearRelations = (event: MouseEvent) => {
-    // TODO Anant: reimplement clearRelations in more efficient way.
-    // Note "allCourses" is changed to a dictionary typed <string -> Course>.
-    for (const iterator of Object.values(allCourses)) {
-      clearRelation(iterator.id);
+    for(const id of augmented.current)
+    {
+      clearRelation(id);
     }
+    augmented.current = [];
   };
 
   const missingTooltip = (courseId: string) => {

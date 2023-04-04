@@ -1,12 +1,12 @@
-// 8 draggable columns for each semesters.
-
 import { SetStateAction, useContext, useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { ReactSortable } from "react-sortablejs";
 import { Course, CourseCtx } from "../App";
 import CourseCard from "./CourseCard";
 
+const NUM_SEMESTERS = 8;
 type Dispatch<A> = (value: A) => void;
+let scheduledCourses: Course[][] = new Array(NUM_SEMESTERS).fill([]);
 
 function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: number): Dispatch<Course[]> {
   return (courseRow: Course[]) => {
@@ -18,19 +18,33 @@ function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: n
   };
 }
 
-function PlanTable() {
-  const NUM_SEMESTERS = 8;
-  const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
+export function findMissing(course: Course, prechn: string[]): string[] {
+  let missingCourses: string[] = [];
+  if (scheduledCourses.some((semester: Course[]) => semester.some((c: Course) => c.id === course.id))) {
+    course.concur.forEach((concur) => {
+      if (!scheduledCourses.some((semester: Course[]) => semester.some((c: Course) => c.id === concur))) {
+        missingCourses.push(concur);
+      }
+    });
+    prechn.forEach((prechn) => {
+      if (!scheduledCourses.some((semester: Course[]) => semester.some((c: Course) => c.id === prechn))) {
+        missingCourses.push(prechn);
+      }
+    });
+  }
+  return missingCourses;
+}
 
+function PlanTable() {
+  const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
   // if allCourses list is reloaded, restart planning
   // TODO: change to "reload plan" instead of wiping the plan
   const allCourses = useContext(CourseCtx);
   useEffect(() => {
     setCoursePlan(new Array(NUM_SEMESTERS).fill([]));
-  }, [ allCourses ]);
-
+  }, [allCourses]);
+  scheduledCourses = coursePlan;
   const YEAR_LABELS = ["Freshman", "Sophomore", "Junior", "Senior"];
-
   return (
     <Container fluid>
       <Row>
@@ -43,7 +57,7 @@ function PlanTable() {
                 {semIdxs.map((semIdx) => (
                   <Col key={semIdx} className="ps-0 pe-1">
                     <ReactSortable list={coursePlan[semIdx]} setList={setCoursePlanAtSem(setCoursePlan, semIdx)}
-                                    group="courses" swapThreshold={1.5}>
+                      group="courses" swapThreshold={1.5}>
                       {coursePlan[semIdx]?.map((course) => (
                         <CourseCard key={course.id} course={course} />
                       ))}
