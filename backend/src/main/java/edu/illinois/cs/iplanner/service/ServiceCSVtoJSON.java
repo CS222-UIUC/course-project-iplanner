@@ -155,7 +155,7 @@ public class ServiceCSVtoJSON {
         boolean push = false;   //true when should push to list
         for (int i = 0; i < words.length; i++) {
             String word = words[i];
-            if (word.equals("concurrent")) {
+            if (word.startsWith("concurrent")) {
                 which_list = 0;
                 continue;
             }
