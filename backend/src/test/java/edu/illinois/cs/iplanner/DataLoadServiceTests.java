@@ -43,6 +43,7 @@ public class DataLoadServiceTests {
         assertEquals(0, course1.getPrereq().size());
         assertEquals(0,course1.getConcur().size());
         assertEquals(0,course1.getEquiv().size());
+        assertEquals(0,course1.getSubseq().size());
 
         CourseDTO course2 = courses.get(1);
         assertEquals("SPAN", course2.getSubject());
@@ -52,6 +53,7 @@ public class DataLoadServiceTests {
         assertEquals(1,course2.getPrereq().size());
         assertEquals(0,course2.getConcur().size());
         assertEquals(2, course2.getEquiv().size());
+        assertEquals(17, course2.getSubseq().size());
 
         CourseDTO course3 = courses.get(2);
         assertEquals("LLS", course3.getSubject());
@@ -61,6 +63,19 @@ public class DataLoadServiceTests {
         assertEquals(0,course3.getPrereq().size());
         assertEquals(0,course3.getConcur().size());
         assertEquals(0,course3.getEquiv().size());
+        assertEquals(0, course3.getSubseq().size());
+
+        CourseDTO course4 = courses.get(49);
+        assertEquals("CS", course4.getSubject());
+        assertEquals("233", course4.getNumber());
+        assertEquals("Computer Architecture", course4.getTitle());
+        assertEquals(4, course4.getCredit().get(0).intValue());
+        assertEquals(2,course4.getPrereq().size());
+        assertEquals(1,course4.getConcur().size());
+        assertEquals(0,course4.getEquiv().size());
+        assertEquals(19, course4.getSubseq().size());
+
+
     }
 
 }
