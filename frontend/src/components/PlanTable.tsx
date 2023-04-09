@@ -50,6 +50,8 @@ function PlanTable() {
       })
     });
 
+    // TODO Anant determine pattern warnings
+
     // This comment disables warning of `setMissing` dep., which changes
     // every time the CardActions change and triggers too much updates.
     // eslint-disable-next-line react-hooks/exhaustive-deps

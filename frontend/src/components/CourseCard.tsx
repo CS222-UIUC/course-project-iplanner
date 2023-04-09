@@ -3,7 +3,7 @@ import "./CourseCard.css";
 import { useRef } from 'react';
 import Card from 'react-bootstrap/Card';
 import { MouseEvent, useContext, CSSProperties } from "react";
-import { Search, XSquare } from 'react-bootstrap-icons';
+import { ExclamationTriangle, Search, XSquare } from 'react-bootstrap-icons';
 import useCardActions from "../utils/CardActions";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
@@ -77,6 +77,23 @@ function CourseCard({ course, style }: { course: Course, style: CSSProperties })
     );
   };
 
+  const patternTooltip = (courseId: string) => {
+    let message = "";
+    switch (cardStates[courseId].pattern) {
+      case "fa_only":
+        message += "Offered mostly on fall semesters."; break;
+      case "sp_only":
+        message += "Offered mostly on spring semesters."; break;
+      case "not_recent":
+        message += "Not offered recently"; break;
+    }
+    return (
+      <Tooltip>
+        { message }
+      </Tooltip>
+    )
+  }
+
   return (
     <div style={style}>
       <Card key={course.id} className={"shadow fs-6 h-100 " + cardStates[course.id]?.relation?.toLowerCase()}
@@ -103,6 +120,17 @@ function CourseCard({ course, style }: { course: Course, style: CSSProperties })
               (
                 <OverlayTrigger overlay={missingTooltip(course.id)}>
                   <XSquare className="text-danger"/>
+                </OverlayTrigger>
+              ) :
+              null
+          }
+        </div>
+        <div style={{ position: "absolute", top: "10px", right: "25px" }}>
+          {
+            cardStates[course.id]?.pattern && cardStates[course.id].pattern !== "none" ?
+              (
+                <OverlayTrigger overlay={patternTooltip(course.id)}>
+                  <ExclamationTriangle className="text-warning"/>
                 </OverlayTrigger>
               ) :
               null
