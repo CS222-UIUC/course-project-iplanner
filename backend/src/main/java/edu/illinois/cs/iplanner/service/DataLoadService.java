@@ -250,12 +250,16 @@ public class DataLoadService {
     }
     
     public String semPatternDetec(List<String> semesters) {
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
         int numSp = 0;
         int numFa = 0;
+        int totalSem = 0;
+        // If the course has not appeared in the last two years
         if (Integer.parseInt(semesters.get(semesters.size() - 1).substring(0, 4)) < currentYear - 2) {
             return "not_recent";
         }
+        // Counting the number of times a course appears in the fall/spring & the total number of semesters
         for (String semester : semesters) {
             String[] splitString = semester.split("-");
             String season = splitString[1];
@@ -264,12 +268,16 @@ public class DataLoadService {
             } else if (season.equals("sp")) {
                 numSp++;
             }
+            totalSem++;
         }
-        if (numFa >= 5) {
+        // if the number of course appears in fall is greater than 2/3 of the semesters
+        if (numFa >= Math.ceil(0.6666667 * totalSem)) {
             return "fa_only";
-        } else if (numSp >= 5) {
+        // if the number of course appears in spring is greater than 2/3 of the semesters
+        } else if (numSp >= Math.ceil(0.6666667 * totalSem)) {
             return "sp_only";
         }
+        // otherwise, there is no obvious pattern for this course
         return "none";
     }
 
