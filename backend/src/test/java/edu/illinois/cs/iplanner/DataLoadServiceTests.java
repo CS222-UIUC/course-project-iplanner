@@ -23,8 +23,6 @@ public class DataLoadServiceTests {
     @Autowired
     private DataLoadService dataLoadService;
 
-    private String csvInpString = "C:/Users/Edwardhzh/Desktop/CS 222/course-project-iplanner/backend/data/2023-sp.csv";
-
     @BeforeEach
     public void setUp() throws StreamReadException, DatabindException, IOException {
         dataLoadService.resetDatabase();
@@ -32,7 +30,8 @@ public class DataLoadServiceTests {
 
     @Test
     public void testConvertJsonObjToCourseDTOs() throws Exception {
-        List<CourseDTO> courses = dataLoadService.convertJsonObjToCourseDTOs(csvInpString);
+        dataLoadService.dowloadData();
+        List<CourseDTO> courses = dataLoadService.convertJsonObjToCourseDTOs();
         assertEquals(4444, courses.size());
 
         CourseDTO course1 = courses.get(0);

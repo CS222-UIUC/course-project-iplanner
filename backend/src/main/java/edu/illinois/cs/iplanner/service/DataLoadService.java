@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 import org.bson.types.ObjectId;
 
 import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,71 +34,124 @@ public class DataLoadService {
     @Autowired
     CourseDAO courseDAO;
 
-    public List<CourseDTO> convertJsonObjToCourseDTOs(String csvInpString) throws Exception {
-        ServiceCSVtoJSON serviceCSVtoJSON = new ServiceCSVtoJSON();
-        List<CourseDTO> courses = new ArrayList<CourseDTO>();
-        ArrayNode jsonNodes = serviceCSVtoJSON.parse(csvInpString);
-        List<CourseDTO> database = courseDAO.findAll();
+    // Download datasets via CSVdownloader Service
+    public void dowloadData() throws Exception {
+        ServiceCSVdownloader serviceCSVdownloader = new ServiceCSVdownloader();
+        String output = "./backend/data/"; 
+        for (int i = 2016; i < 2024; i++) {
+            serviceCSVdownloader.downloadCSV(Integer.toString(i), "sp", output);
+            serviceCSVdownloader.downloadCSV(Integer.toString(i), "fa", output);
+        }
+        serviceCSVdownloader.downloadCSV("2021", "x", output);
+    }
+
+    public List<CourseDTO> convertJsonObjToCourseDTOs() throws Exception {
+        String folderPath = "./backend/data/";
+        File folder = new File(folderPath);
+        File[] files = folder.listFiles();
 
         Map<String, String> hashtable = new HashMap<>();
-        for (CourseDTO course : database) {
-            String subjAndNum = course.getSubject() + " " + course.getNumber();
-            hashtable.put(subjAndNum, course.getId());
-        }
-        
-        for (JsonNode jsonNode : jsonNodes) {
-            List<List<String>> prereq = new ArrayList<>();
-            List<List<String>> concur = new ArrayList<>();
-            List<String> equiv = new ArrayList<>();
-            List<Integer> credit = new ArrayList<>();
+        List<CourseDTO> courses = new ArrayList<CourseDTO>();
 
-            JsonNode prereqs = jsonNode.get("prereq");
-            for (JsonNode rowNode : prereqs) {
-                List<String> row = new ArrayList<>();
-                for (JsonNode cellNode : rowNode) {
-                    row.add(cellNode.asText());
+        // Iterate through all datasets
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(".csv")) {
+                ServiceCSVtoJSON serviceCSVtoJSON = new ServiceCSVtoJSON();
+                ArrayNode jsonNodes = serviceCSVtoJSON.parse(file.getPath());
+                // Converting Json to CourseDTOs
+                for (JsonNode jsonNode : jsonNodes) {
+                    JsonNode prereqs = jsonNode.get("prereq");
+                    JsonNode concurs = jsonNode.get("concur");
+                    JsonNode equivs = jsonNode.get("equiv");
+                    JsonNode credits = jsonNode.get("credit");
+                    List<List<String>> prereq = new ArrayList<>();
+                    List<List<String>> concur = new ArrayList<>();
+                    List<String> equiv = new ArrayList<>();
+                    List<Integer> credit = new ArrayList<>();
+                    List<String> semester = new ArrayList<>();
+                    for (JsonNode rowNode : prereqs) {
+                        List<String> row = new ArrayList<>();
+                        for (JsonNode cellNode : rowNode) {
+                            row.add(cellNode.asText());
+                        }
+                        prereq.add(row);
+                    }
+                    for (JsonNode rowNode : concurs) {
+                        List<String> row = new ArrayList<>();
+                        for (JsonNode cellNode : rowNode) {
+                            row.add(cellNode.asText());
+                        }
+                        concur.add(row);
+                    }
+                    for (JsonNode rowNode : equivs) {
+                        equiv.add(rowNode.asText());
+                    }
+                    for (JsonNode rowNode : credits) {
+                        credit.add(rowNode.asInt());
+                    }
+                    semester.add(file.getName().substring(0,7));
+
+                    String subjAndNum = jsonNode.get("subject").asText() + " " + jsonNode.get("number").asText();
+                    // If the course already exists in List<CourseDTO>, we merge the information.
+                    if (hashtable.containsKey(subjAndNum) == true) {
+                        Optional<CourseDTO> findCourse = courseDAO.findById(hashtable.get(subjAndNum));
+                        CourseDTO course = findCourse.get();
+                        List<List<String>> currPrereq = course.getPrereq();
+                        List<List<String>> currConcur = course.getConcur();
+                        List<String> currEquiv = course.getEquiv();
+                        List<Integer> currCredit = course.getCredit();
+                        List<String> currSemester = course.getSemester();
+                        for (List<String> subList : prereq) {
+                            if (!currPrereq.contains(subList)) {
+                                currPrereq.add(subList);
+                            }
+                        }
+                        course.setPrereq(currPrereq);
+                        for (List<String> subList : concur) {
+                            if (!currConcur.contains(subList)) {
+                                currConcur.add(subList);
+                            }
+                        }
+                        course.setConcur(currConcur);
+                        for (String elem : equiv) {
+                            if (!currEquiv.contains(elem)) {
+                                currEquiv.add(elem);
+                            }
+                        }
+                        course.setEquiv(currEquiv);
+                        for (Integer elem : credit) {
+                            if (!currCredit.contains(elem)) {
+                                currCredit.add(elem);
+                            }
+                        }
+                        course.setCredit(currCredit);
+                        currSemester.add(file.getName().substring(0,7));
+                        course.setSemester(currSemester);
+                        // update course
+                        courses.removeIf(c ->(c.getId().equals(course.getId())));
+                        courses.add(course);
+                    // else, we create a new courseDTO object
+                    } else {
+                        ObjectId objectId = new ObjectId();
+                        CourseDTO course = new CourseDTO();
+                        course.setId(objectId.toString());
+                        course.setSubject(jsonNode.get("subject").asText());
+                        course.setNumber(jsonNode.get("number").asText());
+                        course.setTitle(jsonNode.get("title").asText());
+                        course.setCredit(credit);
+                        course.setPrereq(prereq);
+                        course.setConcur(concur);
+                        course.setEquiv(equiv);
+                        course.setSemester(semester);
+                        courses.add(course);
+                        hashtable.put(subjAndNum, objectId.toString());
+                    }
                 }
-                prereq.add(row);
             }
-
-            JsonNode concurs = jsonNode.get("concur");
-            for (JsonNode rowNode : concurs) {
-                List<String> row = new ArrayList<>();
-                for (JsonNode cellNode : rowNode) {
-                    row.add(cellNode.asText());
-                }
-                concur.add(row);
-            }
-            
-            JsonNode equivs = jsonNode.get("equiv");
-            for (JsonNode rowNode : equivs) {
-                equiv.add(rowNode.asText());
-            }
-            
-            JsonNode credits = jsonNode.get("credit");
-            for (JsonNode rowNode : credits) {
-                credit.add(rowNode.asInt());
-            }
-
-            String subjAndNum = jsonNode.get("subject").asText() + " " + jsonNode.get("number").asText();
-            if (hashtable.containsKey(subjAndNum) == false) {
-                ObjectId objectId = new ObjectId();
-                CourseDTO course = new CourseDTO();
-                course.setId(objectId.toString());
-                course.setSubject(jsonNode.get("subject").asText());
-                course.setNumber(jsonNode.get("number").asText());
-                course.setTitle(jsonNode.get("title").asText());
-                course.setCredit(credit);
-                course.setPrereq(prereq);
-                course.setConcur(concur);
-                course.setEquiv(equiv);
-                courses.add(course);
-                hashtable.put(subjAndNum, objectId.toString());
-            }
+            courseDAO.saveAll(courses);
         }
-
+        // Converting every course's name in prereq/concur/equiv to course ID
         for (CourseDTO course : courses) {
-            
             List<List<String>> prereq = course.getPrereq();
             List<List<String>> newPrereq = new ArrayList<>();
             for (List<String> subList : prereq) {
@@ -108,7 +163,6 @@ public class DataLoadService {
                 newPrereq.add(temp);
             }
             course.setPrereq(newPrereq);
-
             List<List<String>> concur = course.getConcur();
             List<List<String>> newConcur = new ArrayList<>();
             for (List<String> subList : concur) {
@@ -120,7 +174,6 @@ public class DataLoadService {
                 newConcur.add(temp);
             }
             course.setConcur(newConcur);
-
             List<String> equiv = course.getEquiv();
             List<String> newEquiv = new ArrayList<>();
             for (String s : equiv) {
@@ -129,12 +182,15 @@ public class DataLoadService {
             }
             course.setEquiv(newEquiv);
         }
-        // Calculate Subseqs
+        // Calculate Subseqs & Detect Pattern
         for (CourseDTO course : courses) {
             List<String> subseqCourses= calculateSubseq(courses, hashtable, course);
             course.setSubseq(subseqCourses);
+            String pattern = semePatternDetec(course.getSemester());
+            course.setPattern(pattern);
         }
         courseDAO.saveAll(courses);
+        
         return courses;
     }
 
@@ -183,18 +239,29 @@ public class DataLoadService {
         }
         return subsequentCourses;
     }
+    
     public String semePatternDetec(List<String> semesters) {
-        Set<String> patterns = new HashSet<>();
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        int numSp = 0;
+        int numFa = 0;
+        if (Integer.parseInt(semesters.get(semesters.size() - 1).substring(0, 4)) < currentYear - 2) {
+            return "not_recent";
+        }
         for (String semester : semesters) {
-            patterns.add(semester.substring(4));
+            String[] splitString = semester.split("-");
+            String season = splitString[1];
+            if (season.equals("fa")) {
+                numFa++;
+            } else if (season.equals("sp")) {
+                numSp++;
+            }
         }
-        List<String> list = new ArrayList<String>(patterns);
-        if (list.size() == 1 && list.get(0).equals("Spring")) {
-            return "Spring Semester Only";
-        } else if (list.size() == 1 && list.get(0).equals("Fall")) {
-            return "Fall Semester Only";
+        if (numFa >= 5) {
+            return "fa_only";
+        } else if (numSp >= 5) {
+            return "sp_only";
         }
-        return "Both Spring and Fall Semester";
+        return "none";
     }
 
     public void resetDatabase() throws StreamReadException, DatabindException, IOException {

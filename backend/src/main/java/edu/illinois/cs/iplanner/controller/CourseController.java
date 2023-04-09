@@ -31,7 +31,8 @@ public class CourseController {
 
     @GetMapping("/load-data")
     public List<CourseDTO> loadData() throws Exception {
-        return dataLoadService.convertJsonObjToCourseDTOs("C:/Users/Edwardhzh/Desktop/CS 222/course-project-iplanner/backend/data/2023-sp.csv");
+        // dataLoadService.dowloadData();
+        return dataLoadService.convertJsonObjToCourseDTOs();
     }
 
     @GetMapping("/reset-data")
