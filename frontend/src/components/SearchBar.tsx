@@ -51,7 +51,7 @@ function SearchBar() {
       <ReactSortable list={availCourses} setList={setAvailCourses} group="courses">
         {availCourses?.map((course) => (
           <div key={course.id} className={cardStates[course.id]?.searched ? "" : "d-none"}>
-            <CourseCard course={course} />
+            <CourseCard course={course} style={{}}/>
           </div>
         ))}
       </ReactSortable>

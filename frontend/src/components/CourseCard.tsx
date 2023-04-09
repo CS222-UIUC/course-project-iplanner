@@ -2,12 +2,12 @@ import { CardCtx, Course, CourseCtx } from "../App";
 import "./CourseCard.css";
 import { useRef } from 'react';
 import Card from 'react-bootstrap/Card';
-import { MouseEvent, useContext} from "react";
+import { MouseEvent, useContext, CSSProperties } from "react";
 import { Search, XSquare } from 'react-bootstrap-icons';
 import useCardActions from "../utils/CardActions";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
-function CourseCard({ course }: { course: Course }) {
+function CourseCard({ course, style }: { course: Course, style: CSSProperties }) {
   const relHighlighted = useRef<string[]>([]);
   const { cardStates } = useContext(CardCtx);
   const allCourses = useContext(CourseCtx);
@@ -78,11 +78,16 @@ function CourseCard({ course }: { course: Course }) {
   };
 
   return (
-    <div>
-      <Card key={course.id} className={"shadow fs-6 " + cardStates[course.id]?.relation?.toLowerCase()}
+    <div style={style}>
+      <Card key={course.id} className={"shadow fs-6 h-100 " + cardStates[course.id]?.relation?.toLowerCase()}
             onMouseEnter={calcRelations} onMouseLeave={clearRelations}>
         <Card.Body>
-          {`${course.subject} ${course.number}`}<br />{course.title}
+          <div className="h6">
+            {`${course.subject} ${course.number}`}
+          </div>
+          <div className="small">
+            {course.title}
+          </div>
         </Card.Body>
         <div style={{ position: "absolute", bottom: "10px", right: "10px" }}>
         {

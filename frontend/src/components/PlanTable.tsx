@@ -62,11 +62,12 @@ function PlanTable() {
               <Row className="justify-content-center align-items-center h5">{yearLabel}</Row>
               <Row>
                 {semIdxs.map((semIdx) => (
-                  <Col key={semIdx} className="ps-0 pe-1">
+                  <Col key={semIdx} className="ps-0 pe-0 pt-0 pb-0">
                     <ReactSortable list={coursePlan[semIdx]} setList={setCoursePlanAtSem(setCoursePlan, semIdx)}
                       group="courses" swapThreshold={1.5}>
                       {coursePlan[semIdx]?.map((course) => (
-                        <CourseCard key={course.id} course={course} />
+                        <CourseCard key={course.id} course={course}
+                          style={{ aspectRatio: "1/0.8" }}/>
                       ))}
                     </ReactSortable>
                   </Col>
