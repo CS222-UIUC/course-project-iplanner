@@ -3,10 +3,10 @@ import { Container, Row, Col } from "react-bootstrap";
 import { ReactSortable } from "react-sortablejs";
 import { Course, CourseCtx } from "../App";
 import CourseCard from "./CourseCard";
+import useCardActions from "../utils/CardActions";
 
 const NUM_SEMESTERS = 8;
 type Dispatch<A> = (value: A) => void;
-let scheduledCourses: Course[][] = new Array(NUM_SEMESTERS).fill([]);
 
 function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: number): Dispatch<Course[]> {
   return (courseRow: Course[]) => {
@@ -14,36 +14,43 @@ function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: n
       let cloned = [...prevCoursePlan];
       cloned[idx] = courseRow;
       return cloned;
-    })
+    });
   };
-}
-
-export function findMissing(course: Course, prechn: string[]): string[] {
-  let missingCourses: string[] = [];
-  if (scheduledCourses.some((semester: Course[]) => semester.some((c: Course) => c.id === course.id))) {
-    course.concur.forEach((concur) => {
-      if (!scheduledCourses.some((semester: Course[]) => semester.some((c: Course) => c.id === concur))) {
-        missingCourses.push(concur);
-      }
-    });
-    prechn.forEach((prechn) => {
-      if (!scheduledCourses.some((semester: Course[]) => semester.some((c: Course) => c.id === prechn))) {
-        missingCourses.push(prechn);
-      }
-    });
-  }
-  return missingCourses;
 }
 
 function PlanTable() {
   const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
+
   // if allCourses list is reloaded, restart planning
   // TODO: change to "reload plan" instead of wiping the plan
   const allCourses = useContext(CourseCtx);
   useEffect(() => {
     setCoursePlan(new Array(NUM_SEMESTERS).fill([]));
   }, [allCourses]);
-  scheduledCourses = coursePlan;
+
+  const { setMissing } = useCardActions();
+  useEffect(() => {
+    console.log("Triggered detection");
+    let planUpToSem: Course[][] = [];
+    coursePlan.forEach((sem) => {
+      planUpToSem.push(sem);
+      sem.forEach((course) => {
+        let missingCourses: string[] = [];
+        course.concur.forEach((concur) => {
+          if (!planUpToSem.some((semester: Course[]) => semester.some((c: Course) => c.id === concur))) {
+            missingCourses.push(concur);
+          }
+        });
+        course.prereq.forEach((prereq) => {
+          if (!planUpToSem.slice(0, -1).some((semester: Course[]) => semester.some((c: Course) => c.id === prereq))) {
+            missingCourses.push(prereq);
+          }
+        });
+        setMissing(course.id, missingCourses);
+      })
+    });
+  }, [coursePlan]);
+
   const YEAR_LABELS = ["Freshman", "Sophomore", "Junior", "Senior"];
   return (
     <Container fluid>
