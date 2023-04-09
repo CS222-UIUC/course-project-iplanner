@@ -30,7 +30,7 @@ function PlanTable() {
 
   const { setMissing } = useCardActions();
   useEffect(() => {
-    console.log("Triggered detection");
+    // Prerequisite/concurrent unsatisfied check
     let planUpToSem: Course[][] = [];
     coursePlan.forEach((sem) => {
       planUpToSem.push(sem);
@@ -49,6 +49,10 @@ function PlanTable() {
         setMissing(course.id, missingCourses);
       })
     });
+
+    // This comment disables warning of `setMissing` dep., which changes
+    // every time the CardActions change and triggers too much updates.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coursePlan]);
 
   const YEAR_LABELS = ["Freshman", "Sophomore", "Junior", "Senior"];
