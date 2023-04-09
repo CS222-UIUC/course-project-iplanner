@@ -38,3 +38,4 @@ build/
 ### testing files ###
 /data/
 *.json
+*.csv
