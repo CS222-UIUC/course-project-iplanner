@@ -38,11 +38,20 @@ public class DataLoadService {
     public void dowloadData() throws Exception {
         ServiceCSVdownloader serviceCSVdownloader = new ServiceCSVdownloader();
         String output = "./backend/data/"; 
-        for (int i = 2016; i < 2024; i++) {
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH) + 1;
+        for (int i = 2016; i < currentYear; i++) {
             serviceCSVdownloader.downloadCSV(Integer.toString(i), "sp", output);
             serviceCSVdownloader.downloadCSV(Integer.toString(i), "fa", output);
         }
-        serviceCSVdownloader.downloadCSV("2021", "x", output);
+        serviceCSVdownloader.downloadCSV(Integer.toString(currentYear), "sp", output);
+        if (currentMonth >= 11) {
+            serviceCSVdownloader.downloadCSV(Integer.toString(currentYear), "fa", output);
+            serviceCSVdownloader.downloadCSV(Integer.toString(currentYear + 1), "sp", output);
+        } else if (currentMonth >= 4) {
+            serviceCSVdownloader.downloadCSV(Integer.toString(currentYear), "fa", output);
+        }
     }
 
     public List<CourseDTO> convertJsonObjToCourseDTOs() throws Exception {
@@ -186,7 +195,7 @@ public class DataLoadService {
         for (CourseDTO course : courses) {
             List<String> subseqCourses= calculateSubseq(courses, hashtable, course);
             course.setSubseq(subseqCourses);
-            String pattern = semePatternDetec(course.getSemester());
+            String pattern = semPatternDetec(course.getSemester());
             course.setPattern(pattern);
         }
         courseDAO.saveAll(courses);
@@ -240,7 +249,7 @@ public class DataLoadService {
         return subsequentCourses;
     }
     
-    public String semePatternDetec(List<String> semesters) {
+    public String semPatternDetec(List<String> semesters) {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int numSp = 0;
         int numFa = 0;
