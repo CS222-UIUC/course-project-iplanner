@@ -16,7 +16,7 @@ function SearchBar() {
   // On change of allCourse (api call returns), set available Courses!
   const allCourses = useContext(CourseCtx);
   useEffect(() => {
-    setAvailCourses(allCourses);
+    setAvailCourses(Object.values(allCourses));
   }, [ allCourses ]);
 
   // Since "useCardActions" is a self-defined hook, it needs to be called at the top of another hook,
@@ -28,7 +28,7 @@ function SearchBar() {
     const keywords = event.target.value.toLowerCase().split(/\s+/).filter((str) => str.length > 0);
 
     // If match, dispatch a setSearch() event using cardActions; o/w clearSearch().
-    allCourses.forEach((course) => {
+    Object.values(allCourses).forEach((course) => {
       const matches = keywords.length > 0 && keywords.every(
         (keyword) => (course.subject + course.number + course.title).toLowerCase().includes(keyword)
       );
@@ -51,7 +51,7 @@ function SearchBar() {
       <ReactSortable list={availCourses} setList={setAvailCourses} group="courses">
         {availCourses?.map((course) => (
           <div key={course.id} className={cardStates[course.id]?.searched ? "" : "d-none"}>
-            <CourseCard course={course} />
+            <CourseCard course={course} style={{}}/>
           </div>
         ))}
       </ReactSortable>
