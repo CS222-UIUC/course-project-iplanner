@@ -53,7 +53,7 @@ function PlanTable() {
       })
     });
 
-    // TODO Anant determine pattern warnings
+    // determine pattern warnings
     coursePlan.forEach((sem) => {
       sem.forEach((course) => { 
         course.pattern.forEach((pattern) => { 
