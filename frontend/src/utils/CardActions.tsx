@@ -5,7 +5,7 @@ import { CardCtx } from "../App";
 // courses that have this course as prechn/prereq | equivalent |
 // current selected course | no relation
 type Relation = "prechn" | "prereq" | "concur" | "subseq" | "equiv" | "curr" | "none";
-type Pattern = "fa_only" | "sp_only" | "not_recent" | "none";
+export type Pattern = "fa_only" | "sp_only" | "not_recent" | "none";
 export interface CardState {
   relation: Relation, // if this course has a relation to / is the hovered course
   searched: boolean, // if this course matches the search input

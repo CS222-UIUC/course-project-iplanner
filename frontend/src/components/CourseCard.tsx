@@ -125,7 +125,7 @@ function CourseCard({ course, style }: { course: Course, style: CSSProperties })
               null
           }
         </div>
-        <div style={{ position: "absolute", top: "10px", right: "25px" }}>
+        <div style={{ position: "absolute", top: "10px", right: "30px" }}>
           {
             cardStates[course.id]?.pattern && cardStates[course.id].pattern !== "none" ?
               (

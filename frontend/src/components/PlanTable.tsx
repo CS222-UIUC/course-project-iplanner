@@ -4,6 +4,7 @@ import { ReactSortable } from "react-sortablejs";
 import { Course, CourseCtx } from "../App";
 import CourseCard from "./CourseCard";
 import useCardActions from "../utils/CardActions";
+import { Pattern } from "../utils/CardActions";
 
 const NUM_SEMESTERS = 8;
 type Dispatch<A> = (value: A) => void;
@@ -29,6 +30,8 @@ function PlanTable() {
   }, [allCourses]);
 
   const { setMissing } = useCardActions();
+  const { setPattern } = useCardActions();
+
   useEffect(() => {
     // Prerequisite/concurrent unsatisfied check
     let planUpToSem: Course[][] = [];
@@ -51,6 +54,13 @@ function PlanTable() {
     });
 
     // TODO Anant determine pattern warnings
+    coursePlan.forEach((sem) => {
+      sem.forEach((course) => { 
+        course.pattern.forEach((pattern) => { 
+          setPattern(course.id,pattern as Pattern);
+        }) 
+      }) 
+    });
 
     // This comment disables warning of `setMissing` dep., which changes
     // every time the CardActions change and triggers too much updates.
@@ -73,7 +83,7 @@ function PlanTable() {
                       group="courses" swapThreshold={1.5}>
                       {coursePlan[semIdx]?.map((course) => (
                         <CourseCard key={course.id} course={course}
-                          style={{ aspectRatio: "1/0.8" }}/>
+                          style={{ aspectRatio: "1/0.8" }} />
                       ))}
                     </ReactSortable>
                   </Col>
