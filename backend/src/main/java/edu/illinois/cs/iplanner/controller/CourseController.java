@@ -31,7 +31,7 @@ public class CourseController {
 
     @GetMapping("/load-data")
     public List<CourseDTO> loadData() throws Exception {
-        dataLoadService.dowloadData();
+        dataLoadService.downloadData();
         return dataLoadService.convertJsonObjToCourseDTOs();
     }
 

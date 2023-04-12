@@ -35,10 +35,11 @@ public class DataLoadService {
     CourseDAO courseDAO;
 
     // Download datasets via CSVdownloader Service
-    public void dowloadData() throws Exception {
+    public void downloadData() throws Exception {
         ServiceCSVdownloader serviceCSVdownloader = new ServiceCSVdownloader();
         String output = "./backend/data/"; 
         Calendar calendar = Calendar.getInstance();
+        // Download is based on current year. EX:  "2023 April" downloads files until "2023-fa", "2023 Nov" downloads file until "2024-sp"
         int currentYear = calendar.get(Calendar.YEAR);
         int currentMonth = calendar.get(Calendar.MONTH) + 1;
         for (int i = 2016; i < currentYear; i++) {
