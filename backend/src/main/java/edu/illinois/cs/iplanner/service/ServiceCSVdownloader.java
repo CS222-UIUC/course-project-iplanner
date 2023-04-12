@@ -1,33 +1,18 @@
 package edu.illinois.cs.iplanner.service;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-
 
 public class ServiceCSVdownloader {
     //URL of the folder of csv files
     private final String DataFolderURL = "https://raw.githubusercontent.com/wadefagen/datasets/master/course-catalog/data/";
     //Used to terminate recursive function "downloadCSV" when attempting to use a different form of a term
     private boolean recursion = false;
-    //======================================================================================================
-    //                           main() will be removed after this class being finalized
-    //======================================================================================================
-    public static void main(String[] args) throws Exception {
-        ServiceCSVdownloader downloader = new ServiceCSVdownloader();
-        String output = "./backend/data/"; 
-        for (int i = 2016; i < 2024; i++) {
-            try {
-                downloader.downloadCSV(Integer.toString(i), "sp", output);
-            } catch (Exception e) {}
-            try {
-                downloader.downloadCSV(Integer.toString(i), "fa", output);
-            } catch (Exception e) {}
-        }
-        downloader.downloadCSV("2021", "x", output);
-    }
     //Service Function
     public void downloadCSV(String year, String term, String outputDirectory) throws Exception{
         //Check Invalid Input
