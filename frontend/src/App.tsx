@@ -9,8 +9,7 @@ import Col from 'react-bootstrap/esm/Col';
 import PlanTable from './components/PlanTable';
 import { CardAction, cardReducer, CardState } from './utils/CardActions';
 
-// TODO: FE testing only, change to api call in useEffect onMount function
-import data from "./data/20230307_api_test_courses.json";
+// import data from "./data/20230307_api_test_courses.json";
 
 export interface Course {
   id: string,
@@ -42,10 +41,17 @@ function App() {
 
   // Execute on mount
   useEffect(() => {
-    setAllCourses(data.reduce((dict: Record<string, Course>, course: Course) => {
-      dict[course.id] = course;
-      return dict;
-    }, {}));
+    let xhr = new XMLHttpRequest();
+
+    xhr.onload = function(event: ProgressEvent<EventTarget>)  {
+      console.log("Finished loading data!");
+      setAllCourses(JSON.parse(this.responseText).reduce((dict: Record<string, Course>, course: Course) => {
+        dict[course.id] = course;
+        return dict;
+      }, {}));
+    };
+    xhr.open('GET', 'http://localhost:1123/api/course/2020-fa'); // TODO change this to be based on current sem/dropdown
+    xhr.send();
   }, []);
 
   return (
