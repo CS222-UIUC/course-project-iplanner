@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import edu.illinois.cs.iplanner.service.ServiceCSVtoJSON;
 
-public class ServiceTest {
+public class ServiceParsingTest {
     public static void main(String[] args) throws Exception {
         System.out.println("===== Tester Starts =====");
         String csvInputPath = "./backend/src/test/java/edu/illinois/cs/iplanner/data/csv-json-input.csv";
-        String jsonOuputPath = "./backend/src/test/java/edu/illinois/cs/iplanner/data/csv-json-output.json";
+        // String jsonOuputPath = "./backend/src/test/java/edu/illinois/cs/iplanner/data/csv-json-output.json";
         ServiceCSVtoJSON converter = new ServiceCSVtoJSON();
         ArrayNode nodes = converter.parse(csvInputPath);
         // ArrayNode nodes = converter.parse(csvInputPath, jsonOuputPath);
