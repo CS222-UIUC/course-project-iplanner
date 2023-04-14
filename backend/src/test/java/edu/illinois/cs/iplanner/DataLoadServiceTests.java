@@ -1,6 +1,7 @@
 package edu.illinois.cs.iplanner;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +24,6 @@ public class DataLoadServiceTests {
     @Autowired
     private DataLoadService dataLoadService;
 
-    private String csvInpString = "C:/Users/Edwardhzh/Desktop/CS 222/course-project-iplanner/backend/data/2023-sp.csv";
-
     @BeforeEach
     public void setUp() throws StreamReadException, DatabindException, IOException {
         dataLoadService.resetDatabase();
@@ -32,7 +31,8 @@ public class DataLoadServiceTests {
 
     @Test
     public void testConvertJsonObjToCourseDTOs() throws Exception {
-        List<CourseDTO> courses = dataLoadService.convertJsonObjToCourseDTOs(csvInpString);
+        dataLoadService.dowloadData();
+        List<CourseDTO> courses = dataLoadService.convertJsonObjToCourseDTOs();
         assertEquals(4444, courses.size());
 
         CourseDTO course1 = courses.get(0);
@@ -76,6 +76,52 @@ public class DataLoadServiceTests {
         assertEquals(19, course4.getSubseq().size());
 
 
+    }
+
+    @Test
+    public void testSemPatternDetec() throws Exception {
+        CourseDTO course1 = new CourseDTO();
+        List<String> semester1 = new ArrayList<>();
+        semester1.add("2019-fa");
+        semester1.add("2020-sp");
+        semester1.add("2021-sp");
+        semester1.add("2022-sp");
+        semester1.add("2023-sp");
+        course1.setSemester(semester1);
+        String pattern1 = dataLoadService.semPatternDetec(course1.getSemester());
+        assertEquals("sp_only", pattern1);
+
+        CourseDTO course2 = new CourseDTO();
+        List<String> semester2 = new ArrayList<>();
+        semester2.add("2019-fa");
+        semester2.add("2020-sp");
+        semester2.add("2021-fa");
+        semester2.add("2022-fa");
+        semester2.add("2023-fa");
+        course2.setSemester(semester2);
+        String pattern2 = dataLoadService.semPatternDetec(course2.getSemester());
+        assertEquals("fa_only", pattern2);
+
+        CourseDTO course3 = new CourseDTO();
+        List<String> semester3 = new ArrayList<>();
+        semester3.add("2016-fa");
+        semester3.add("2016-sp");
+        semester3.add("2017-fa");
+        semester3.add("2018-fa");
+        course3.setSemester(semester3);
+        String pattern3 = dataLoadService.semPatternDetec(course3.getSemester());
+        assertEquals("not_recent", pattern3);
+
+        CourseDTO course4 = new CourseDTO();
+        List<String> semester4 = new ArrayList<>();
+        semester4.add("2021-fa");
+        semester4.add("2022-sp");
+        semester4.add("2022-fa");
+        semester4.add("2023-fa");
+        semester4.add("2023-sp");
+        course4.setSemester(semester4);
+        String pattern4 = dataLoadService.semPatternDetec(course4.getSemester());
+        assertEquals("none", pattern4);
     }
 
 }

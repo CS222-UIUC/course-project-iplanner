@@ -31,7 +31,8 @@ public class CourseController {
 
     @GetMapping("/load-data")
     public List<CourseDTO> loadData() throws Exception {
-        return dataLoadService.convertJsonObjToCourseDTOs("C:/Users/Edwardhzh/Desktop/CS 222/course-project-iplanner/backend/data/2023-sp.csv");
+        dataLoadService.downloadData();
+        return dataLoadService.convertJsonObjToCourseDTOs();
     }
 
     @GetMapping("/reset-data")
@@ -39,12 +40,30 @@ public class CourseController {
         dataLoadService.resetDatabase();
     }
     
-    @RequestMapping("/") // Returns a list of all courses
-    public List<CourseViewVO> getAllCourses() {
+    @RequestMapping("/{semester}")
+    public List<CourseViewVO> getAllCourses(@PathVariable(name = "semester") String semester) {
         List<CourseDTO> courses = courseDAO.findAll();
         List<CourseViewVO> allCourses = new ArrayList<CourseViewVO>();
         for (CourseDTO course : courses) {
-            allCourses.add(new CourseViewVO(course));
+            boolean add = false;
+            List<String> courseSemester = course.getSemester();
+            for (String s : courseSemester) {
+                // if courseSemester.year > semester.year
+                if (Integer.parseInt(s.substring(0, 4)) > Integer.parseInt(semester.substring(0, 4))) {
+                    add = true;
+                    break;
+                } else if (Integer.parseInt(s.substring(0, 4)) == Integer.parseInt(semester.substring(0, 4))) {
+                    if (semester.substring(5, 7).equals("fa")) {
+                        if (s.substring(5, 7).equals("sp")) {
+                            add = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (add) {
+                allCourses.add(new CourseViewVO(course));
+            }
         }
         return allCourses;
     }

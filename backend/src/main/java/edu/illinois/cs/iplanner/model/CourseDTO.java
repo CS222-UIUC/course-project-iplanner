@@ -33,4 +33,7 @@ public class CourseDTO {
 
     private List<String> equiv;
 
+    private List<String> semester;
+
+    private String pattern;
 }
