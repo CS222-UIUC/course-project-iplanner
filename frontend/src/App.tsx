@@ -33,7 +33,8 @@ const emptyCardCtxType: CardCtxType = {
   cardDispatch: (arg: CardAction) => { }
 };
 export const CardCtx = createContext(emptyCardCtxType);
-export const CourseCtx = createContext<Record<string, Course>>({});
+
+export const AppCtx = createContext<Record<string, Course>>({});
 
 function App() {
   const [cardStates, cardDispatch] = useReducer(cardReducer, {});
@@ -50,13 +51,13 @@ function App() {
         return dict;
       }, {}));
     };
-    xhr.open('GET', 'http://localhost:1123/api/course/2020-fa'); // TODO change this to be based on current sem/dropdown
+    xhr.open('GET', 'http://localhost:1123/api/course/2020-fa'); // TODO should be based on current sem/dropdown value
     xhr.send();
   }, []);
 
   return (
     <Container fluid>
-      <CourseCtx.Provider value={allCourses}>
+      <AppCtx.Provider value={allCourses}>
         <CardCtx.Provider value={{ cardStates, cardDispatch }}>
           <Row className="mt-2">
             <Col xs={10}>
@@ -67,7 +68,7 @@ function App() {
             </Col>
           </Row>
         </CardCtx.Provider>
-      </CourseCtx.Provider>
+      </AppCtx.Provider>
     </Container>
   )
 }

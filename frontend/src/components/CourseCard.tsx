@@ -1,67 +1,67 @@
-import { CardCtx, Course, CourseCtx } from "../App";
+import { CardCtx, Course, AppCtx } from "../App";
 import "./CourseCard.css";
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import Card from 'react-bootstrap/Card';
 import { MouseEvent, useContext, CSSProperties } from "react";
 import { Search, XSquare } from 'react-bootstrap-icons';
 import useCardActions from "../utils/CardActions";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
-function CourseCard({ course, style }: { course: Course, style: CSSProperties }) {
+const CourseCard = memo(({ course, style }: { course: Course, style: CSSProperties }) => {
   const relHighlighted = useRef<string[]>([]);
   const { cardStates } = useContext(CardCtx);
-  const allCourses = useContext(CourseCtx);
+  const allCourses = useContext(AppCtx);
   const { setRelation, clearRelation } = useCardActions();
 
   // Use allCourses to determine relations. prereq|concur|equiv are provided.
   // Calculate prerequisite chain (prechn). Also set the current hovered course
   // to "curr". Use setRelation(course_id, relation) to set the relations.
   const calcRelations = (event: MouseEvent) => {
-    let prechn: string[] = [];
-    const queue = [course.id];
+    // let prechn: string[] = [];
+    // const queue = [course.id];
 
-    while (queue.length !== 0) {
-      const cId = queue.shift()!;
-      const cCourse = allCourses[cId];
+    // while (queue.length !== 0) {
+    //   const cId = queue.shift()!;
+    //   const cCourse = allCourses[cId];
 
-      for (const Ids of cCourse.prereq) {
-        queue.push(Ids);
-        setRelation(Ids, "prechn");
-        relHighlighted.current.push(Ids);
-        prechn.push(Ids);
-      }
-    }
+    //   for (const Ids of cCourse.prereq) {
+    //     queue.push(Ids);
+    //     setRelation(Ids, "prechn");
+    //     relHighlighted.current.push(Ids);
+    //     prechn.push(Ids);
+    //   }
+    // }
 
-    for (const itr of course.equiv) {
-      setRelation(itr, "equiv");
-      relHighlighted.current.push(itr);
-    }
-    for (const itr of course.concur) {
-      setRelation(itr, "concur");
-      relHighlighted.current.push(itr);
-    }
-    for (const itr of course.prereq) {
-      setRelation(itr, "prereq");
-    }
-    for (const itr of course.equiv) {
-      setRelation(itr, "equiv");
-      relHighlighted.current.push(itr);
-    }
-    for (const itr of course.subseq) {
-      setRelation(itr, "subseq");
-      relHighlighted.current.push(itr);
-    }
-    setRelation(course.id, "curr");
-    relHighlighted.current.push(course.id);
+    // for (const itr of course.equiv) {
+    //   setRelation(itr, "equiv");
+    //   relHighlighted.current.push(itr);
+    // }
+    // for (const itr of course.concur) {
+    //   setRelation(itr, "concur");
+    //   relHighlighted.current.push(itr);
+    // }
+    // for (const itr of course.prereq) {
+    //   setRelation(itr, "prereq");
+    // }
+    // for (const itr of course.equiv) {
+    //   setRelation(itr, "equiv");
+    //   relHighlighted.current.push(itr);
+    // }
+    // for (const itr of course.subseq) {
+    //   setRelation(itr, "subseq");
+    //   relHighlighted.current.push(itr);
+    // }
+    // setRelation(course.id, "curr");
+    // relHighlighted.current.push(course.id);
   };
 
   // Set all course's relation to "none".
   const clearRelations = (event: MouseEvent) => {
-    for(const id of relHighlighted.current)
-    {
-      clearRelation(id);
-    }
-    relHighlighted.current = [];
+    // for(const id of relHighlighted.current)
+    // {
+    //   clearRelation(id);
+    // }
+    // relHighlighted.current = [];
   };
 
   const missingTooltip = (courseId: string) => {
@@ -111,6 +111,6 @@ function CourseCard({ course, style }: { course: Course, style: CSSProperties })
       </Card>
     </div>
   )
-}
+});
 
 export default CourseCard;

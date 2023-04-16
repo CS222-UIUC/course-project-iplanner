@@ -1,7 +1,7 @@
 import { SetStateAction, useContext, useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { ReactSortable } from "react-sortablejs";
-import { Course, CourseCtx } from "../App";
+import { Course, AppCtx } from "../App";
 import CourseCard from "./CourseCard";
 import useCardActions from "../utils/CardActions";
 
@@ -23,7 +23,7 @@ function PlanTable() {
 
   // if allCourses list is reloaded, restart planning
   // TODO: change to "reload plan" instead of wiping the plan
-  const allCourses = useContext(CourseCtx);
+  const allCourses = useContext(AppCtx);
   useEffect(() => {
     setCoursePlan(new Array(NUM_SEMESTERS).fill([]));
   }, [allCourses]);
