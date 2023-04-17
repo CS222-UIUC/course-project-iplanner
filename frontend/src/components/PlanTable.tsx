@@ -19,6 +19,14 @@ function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: n
   };
 }
 
+function getColumnCredits(coursePlan: Course[][], sem: number): number {
+  let credits: number = 0;
+  coursePlan[sem].forEach((course) => {
+    credits += course.credit;
+  });
+  return credits;
+}
+
 function PlanTable() {
   const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
 
@@ -54,12 +62,30 @@ function PlanTable() {
     });
 
     // determine pattern warnings
-    coursePlan.forEach((sem) => {
-      sem.forEach((course) => { 
-        course.pattern.forEach((pattern) => { 
-          setPattern(course.id,pattern as Pattern);
-        }) 
-      }) 
+    coursePlan.forEach((sem, semIdx) => {
+      sem.forEach((course) => {
+        course.pattern.forEach((pattern) => {
+          if (pattern === "fa_only") {
+            if (semIdx % 2 !== 0) {
+              setPattern(course.id, pattern as Pattern);
+            }
+            else {
+              setPattern(course.id, "none");
+            }
+          }
+          else if (pattern === "sp_only") {
+            if (semIdx % 2 !== 1) {
+              setPattern(course.id, pattern as Pattern);
+            }
+            else {
+              setPattern(course.id, "none");
+            }
+          }
+          else if (pattern === "not_recent" || pattern === "none") {
+            setPattern(course.id, pattern as Pattern);
+          }
+        })
+      })
     });
 
     // This comment disables warning of `setMissing` dep., which changes
@@ -76,6 +102,13 @@ function PlanTable() {
           return (
             <Col key={yearLabel + yearIdx} className="border-end border-2">
               <Row className="justify-content-center align-items-center h5">{yearLabel}</Row>
+              <Row className="justify-content-center align-items-center h6">
+                {semIdxs.map((semIdx) => (
+                  <Col>
+                    Total Credits: {getColumnCredits(coursePlan, semIdx)}
+                  </Col>
+                ))}
+              </Row>
               <Row>
                 {semIdxs.map((semIdx) => (
                   <Col key={semIdx} className="ps-0 pe-0 pt-0 pb-0">
