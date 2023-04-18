@@ -8,4 +8,5 @@ import edu.illinois.cs.iplanner.model.CourseDTO;
 
 public interface CourseDAO extends MongoRepository<CourseDTO, String> {
     List<CourseDTO> findAll();
+    List<CourseDTO> findBySubjectAndNumber(String subject, String number);
 }

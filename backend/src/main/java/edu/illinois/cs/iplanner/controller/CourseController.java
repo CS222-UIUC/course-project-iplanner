@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -107,5 +108,21 @@ public class CourseController {
             return new CourseDTO();
         }
         return getDesiredCourse.get(0);
+    }
+
+    @GetMapping("/search")
+    public List<CourseDTO> searchCourses (@RequestParam(name = "kw", required = true) String kw, @RequestParam(name = "subject", required = false) String subject) {
+        List<CourseDTO> searchResult = new ArrayList<>();
+        String[] splitkw = kw.split("\\s+");
+        if (subject != null) {
+            searchResult = courseDAO.findBySubjectAndNumber(subject, splitkw[1]);
+        } else {
+            searchResult = courseDAO.findBySubjectAndNumber(splitkw[0], splitkw[1]);
+        }
+        if (searchResult.isEmpty()) {
+            System.out.println("Course Does Not Exist!");
+        }
+        
+        return searchResult;
     }
 }

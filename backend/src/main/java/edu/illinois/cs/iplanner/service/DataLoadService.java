@@ -8,7 +8,9 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.bson.types.ObjectId;
 
 import java.io.IOException;
@@ -281,7 +283,7 @@ public class DataLoadService {
         // otherwise, there is no obvious pattern for this course
         return "none";
     }
-
+    
     public void resetDatabase() throws StreamReadException, DatabindException, IOException {
         courseDAO.deleteAll();
     }
