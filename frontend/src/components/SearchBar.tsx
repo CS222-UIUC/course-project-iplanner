@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { memo, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 
 import { CardCtx, Course, AppCtx } from "../App"
@@ -28,6 +28,7 @@ function SearchBar() {
   const searchCourse = (event: React.MouseEvent<HTMLButtonElement>) => {
     const keywords = searchTerm.toLowerCase().split(/\s+/).filter((str) => str.length > 0);
 
+    console.log("Started searching");
     const results: Record<string, boolean> = {};
     Object.values(allCourses).forEach((course) => {
       const matches = keywords.length > 0 && keywords.every(
@@ -35,6 +36,7 @@ function SearchBar() {
       );
       results[course.id] = matches;
     });
+    console.log("Finished searching");
     setSearchResults(results);
   };
 
@@ -42,17 +44,16 @@ function SearchBar() {
   // not in a callback function. Thus we retrieve dispatch functions from hook useCardActions() at top
   // of our function, and make calls  to these dispatch functions later/
   const { setSearch, clearSearch } = useCardActions();
-  useEffect(() => {
-    let foundCount = 0;
-    Object.values(allCourses).every((course) => {
+  useLayoutEffect(() => {
+    console.log("Started rendering...");
+    Object.values(allCourses).forEach((course) => {
       if (searchResults[course.id]) {
         setSearch(course.id);
-        ++foundCount;
       } else {
         clearSearch(course.id);
       }
-      return foundCount < 50; // Only show first 50 results
     });
+    console.log("Finished rendering...");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchResults]);
 
@@ -76,4 +77,4 @@ function SearchBar() {
   );
 };
 
-export default SearchBar;
+export default memo(SearchBar);

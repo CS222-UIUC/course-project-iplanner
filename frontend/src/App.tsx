@@ -1,4 +1,4 @@
-import { createContext, Dispatch, useEffect, useReducer, useState } from 'react';
+import { createContext, Dispatch, useEffect, useReducer, useState, Profiler } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -55,21 +55,33 @@ function App() {
     xhr.send();
   }, []);
 
+  const profilerCallback = function(id: string,
+    phase: 'mount' | 'update',
+    actualDuration: number,
+    baseDuration: number,
+    startTime: number,
+    commitTime: number,
+    interactions: Set<any>) {
+    console.log(`${id} ${phase} took ${actualDuration} ms`);
+  }
+
   return (
-    <Container fluid>
-      <AppCtx.Provider value={allCourses}>
-        <CardCtx.Provider value={{ cardStates, cardDispatch }}>
-          <Row className="mt-2">
-            <Col xs={10}>
-              <PlanTable />
-            </Col>
-            <Col xs={2}>
-              <SearchBar />
-            </Col>
-          </Row>
-        </CardCtx.Provider>
-      </AppCtx.Provider>
-    </Container>
+    <Profiler id="searchBarProfiler" onRender={profilerCallback}>
+      <Container fluid>
+        <AppCtx.Provider value={allCourses}>
+          <CardCtx.Provider value={{ cardStates, cardDispatch }}>
+            <Row className="mt-2">
+              <Col xs={10}>
+                <PlanTable />
+              </Col>
+              <Col xs={2}>
+                <SearchBar />
+              </Col>
+            </Row>
+          </CardCtx.Provider>
+        </AppCtx.Provider>
+      </Container>
+    </Profiler>
   )
 }
 

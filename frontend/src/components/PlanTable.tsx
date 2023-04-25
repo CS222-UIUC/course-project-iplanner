@@ -1,4 +1,4 @@
-import { SetStateAction, useContext, useEffect, useState } from "react";
+import { SetStateAction, memo, useContext, useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { ReactSortable } from "react-sortablejs";
 import { Course, AppCtx } from "../App";
@@ -85,4 +85,4 @@ function PlanTable() {
   )
 }
 
-export default PlanTable;
+export default memo(PlanTable);

@@ -7,7 +7,7 @@ import { Search, XSquare } from 'react-bootstrap-icons';
 import useCardActions from "../utils/CardActions";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
-const CourseCard = memo(({ course, style }: { course: Course, style: CSSProperties }) => {
+function CourseCard({ course, style }: { course: Course, style: CSSProperties }) {
   const relHighlighted = useRef<string[]>([]);
   const { cardStates } = useContext(CardCtx);
   const allCourses = useContext(AppCtx);
@@ -111,6 +111,6 @@ const CourseCard = memo(({ course, style }: { course: Course, style: CSSProperti
       </Card>
     </div>
   )
-});
+}
 
-export default CourseCard;
+export default memo(CourseCard);
