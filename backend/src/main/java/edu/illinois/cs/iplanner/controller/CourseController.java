@@ -2,14 +2,21 @@ package edu.illinois.cs.iplanner.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+
+
 import edu.illinois.cs.iplanner.dao.CourseDAO;
 import edu.illinois.cs.iplanner.model.CourseDTO;
+import edu.illinois.cs.iplanner.service.DataLoadService;
 import edu.illinois.cs.iplanner.vo.CourseViewVO;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -19,12 +26,44 @@ public class CourseController {
     @Autowired
     CourseDAO courseDAO;
 
-    @RequestMapping("/") // Returns a list of all courses
-    public List<CourseViewVO> getAllCourses() {
+    @Autowired
+    DataLoadService dataLoadService;
+
+    @GetMapping("/load-data")
+    public List<CourseDTO> loadData() throws Exception {
+        dataLoadService.downloadData();
+        return dataLoadService.convertJsonObjToCourseDTOs();
+    }
+
+    @GetMapping("/reset-data")
+    public void deleteData() throws IOException {
+        dataLoadService.resetDatabase();
+    }
+    
+    @RequestMapping("/{semester}")
+    public List<CourseViewVO> getAllCourses(@PathVariable(name = "semester") String semester) {
         List<CourseDTO> courses = courseDAO.findAll();
         List<CourseViewVO> allCourses = new ArrayList<CourseViewVO>();
         for (CourseDTO course : courses) {
-            allCourses.add(new CourseViewVO(course));
+            boolean add = false;
+            List<String> courseSemester = course.getSemester();
+            for (String s : courseSemester) {
+                // if courseSemester.year > semester.year
+                if (Integer.parseInt(s.substring(0, 4)) > Integer.parseInt(semester.substring(0, 4))) {
+                    add = true;
+                    break;
+                } else if (Integer.parseInt(s.substring(0, 4)) == Integer.parseInt(semester.substring(0, 4))) {
+                    if (semester.substring(5, 7).equals("fa")) {
+                        if (s.substring(5, 7).equals("sp")) {
+                            add = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (add) {
+                allCourses.add(new CourseViewVO(course));
+            }
         }
         return allCourses;
     }
@@ -64,6 +103,9 @@ public class CourseController {
     public CourseDTO getCourseInfo(@PathVariable(name = "subject_name") String subject_name, @PathVariable(name = "number") String number) {
         List<CourseDTO> getDesiredCourse = getCoursesFromSubjectX(subject_name);
         getDesiredCourse.removeIf(course->(!course.getNumber().equals(number)));
+        if (getDesiredCourse.size() == 0) {
+            return new CourseDTO();
+        }
         return getDesiredCourse.get(0);
     }
 }

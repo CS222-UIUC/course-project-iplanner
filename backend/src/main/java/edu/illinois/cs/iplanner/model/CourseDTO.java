@@ -23,12 +23,17 @@ public class CourseDTO {
 
     private String title;
 
-    private Integer credit;
+    private List<Integer> credit;
 
     private List<List<String>> prereq;
 
     private List<List<String>> concur;
+    
+    private List<String> subseq;
 
     private List<String> equiv;
 
+    private List<String> semester;
+
+    private String pattern;
 }
