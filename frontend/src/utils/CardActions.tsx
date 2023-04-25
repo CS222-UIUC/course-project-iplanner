@@ -5,16 +5,20 @@ import { CardCtx } from "../App";
 // courses that have this course as prechn/prereq | equivalent |
 // current selected course | no relation
 type Relation = "prechn" | "prereq" | "concur" | "subseq" | "equiv" | "curr" | "none";
+export type Pattern = "fa_only" | "sp_only" | "not_recent" | "none";
 export interface CardState {
   relation: Relation, // if this course has a relation to / is the hovered course
   searched: boolean, // if this course matches the search input
   missing: Array<string>, // missing prereqs/concur courses id
+  pattern: Pattern, // if the course is against the pattern in course.pattern
 }
 
 export interface CardAction {
   id: string,
   type: string,
   missing?: Array<String>, // optional arg for missing prereq/concur chain
+  relation?: Relation,
+  pattern?: Pattern,
 }
 
 // Handles different CardActions and changes corresponding cardStates.
@@ -35,22 +39,16 @@ export function cardReducer(cardStates: Record<string, CardState>, action: CardA
       return update(cardStates, action.id, "searched", true);
     case 'SEARCH_CLEAR':
       return update(cardStates, action.id, "searched", false);
-    case 'RELATION_PRECHN':
-      return update(cardStates, action.id, "relation", "prechn");
-    case 'RELATION_PREREQ':
-      return update(cardStates, action.id, "relation", "prereq");
-    case 'RELATION_CONCUR':
-      return update(cardStates, action.id, "relation", "concur");
-    case 'RELATION_SUBSEQ':
-      return update(cardStates, action.id, "relation", "subseq");
-    case 'RELATION_EQUIV':
-      return update(cardStates, action.id, "relation", "equiv");
-    case 'RELATION_CURR':
-      return update(cardStates, action.id, "relation", "curr");
-    case 'RELATION_NONE':
+    case 'RELATION_SET':
+      return update(cardStates, action.id, "relation", action.relation);
+    case 'RELATION_CLEAR': // RELATION_SET with arg = "none"
       return update(cardStates, action.id, "relation", "none");
     case 'MISSING_SET':
       return update(cardStates, action.id, "missing", action.missing);
+    case 'PATTERN_SET':
+      return update(cardStates, action.id, "pattern", action.pattern);
+    case 'PATTERN_CLEAR': // PATTERN_SET with arg = "none"
+      return update(cardStates, action.id, "pattern", "none");
     default:
       return cardStates;
   }
@@ -78,13 +76,14 @@ function useCardActions() {
   const setRelation = (id: string, relation: Relation) => {
     cardDispatch({
       id,
-      type: `RELATION_${relation.toUpperCase()}`
+      type: `RELATION_SET`,
+      relation
     })
   };
   const clearRelation = (id: string) => {
     cardDispatch({
       id,
-      type: "RELATION_NONE"
+      type: "RELATION_CLEAR"
     })
   }
   const setMissing = (id: string, missing: Array<String>) => {
@@ -94,6 +93,19 @@ function useCardActions() {
       missing
     })
   };
+  const setPattern = (id: string, pattern: Pattern) => {
+    cardDispatch({
+      id,
+      type: "PATTERN_SET",
+      pattern
+    })
+  }
+  const clearPattern = (id: string) => {
+    cardDispatch({
+      id,
+      type: "PATTERN_CLEAR"
+    })
+  }
 
   return {
     setSearch,
@@ -101,6 +113,8 @@ function useCardActions() {
     setRelation,
     clearRelation,
     setMissing,
+    setPattern,
+    clearPattern
   }
 }
 

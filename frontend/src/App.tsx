@@ -21,7 +21,8 @@ export interface Course {
   equiv: string[],
   concur: string[],
   prereq: string[],
-  subseq: string[]
+  subseq: string[],
+  pattern: string[]
 }
 
 interface CardCtxType {
