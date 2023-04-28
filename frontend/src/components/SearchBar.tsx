@@ -12,6 +12,7 @@ function SearchBar() {
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [availCourses, setAvailCourses] = useState<Course[]>([]);
+  const [desc, setDesc] = useState("");
 
   // On change of allCourse (api call returns), set available Courses!
   const allCourses = useContext(CourseCtx);
@@ -51,7 +52,7 @@ function SearchBar() {
       <ReactSortable list={availCourses} setList={setAvailCourses} group="courses">
         {availCourses?.map((course) => (
           <div key={course.id} className={cardStates[course.id]?.searched ? "" : "d-none"}>
-            <CourseCard course={course} style={{}}/>
+            <CourseCard course={course} style={{}} desc={desc} setDesc={setDesc} />
           </div>
         ))}
       </ReactSortable>
