@@ -31,7 +31,7 @@ public class DataLoadServiceTests {
 
     @Test
     public void testConvertJsonObjToCourseDTOs() throws Exception {
-        dataLoadService.dowloadData();
+        dataLoadService.downloadData();
         List<CourseDTO> courses = dataLoadService.convertJsonObjToCourseDTOs();
         assertEquals(4444, courses.size());
 
