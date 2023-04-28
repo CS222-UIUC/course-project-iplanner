@@ -2,6 +2,9 @@ package edu.illinois.cs.iplanner.controller;
 
 import java.util.List;
 import java.util.Optional;
+
+import javax.naming.directory.SearchResult;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -80,34 +84,49 @@ public class CourseController {
         return null;
     }
 
-    @RequestMapping("/subjects") // Returns a list of all subjects (e.g. CS, Stats, ECE, etc.)
-    public List<String> getAllSubjects() {
-        List<String> allSubjects = new ArrayList<String>();
-        List<CourseDTO> courses = courseDAO.findAll();
-        for (CourseDTO course : courses) {
-            if (!allSubjects.contains(course.getSubject())){
-                allSubjects.add(course.getSubject());
-            }
-        }
-        return allSubjects;
-    }
+    // @RequestMapping("/subjects") // Returns a list of all subjects (e.g. CS, Stats, ECE, etc.)
+    // public List<String> getAllSubjects() {
+    //     List<String> allSubjects = new ArrayList<String>();
+    //     List<CourseDTO> courses = courseDAO.findAll();
+    //     for (CourseDTO course : courses) {
+    //         if (!allSubjects.contains(course.getSubject())){
+    //             allSubjects.add(course.getSubject());
+    //         }
+    //     }
+    //     return allSubjects;
+    // }
 
-    @RequestMapping("/subjects/{subject_name}") // Returns a list of courses in "subject_name" category
-    public List<CourseDTO> getCoursesFromSubjectX(@PathVariable(name = "subject_name") String subject_name) {
-        List<CourseDTO> allCourses = courseDAO.findAll();
-        allCourses.removeIf(course -> (!course.getSubject().equals(subject_name)));
-        return allCourses;
-    }
+    // @RequestMapping("/subjects/{subject_name}") // Returns a list of courses in "subject_name" category
+    // public List<CourseDTO> getCoursesFromSubjectX(@PathVariable(name = "subject_name") String subject_name) {
+    //     List<CourseDTO> allCourses = courseDAO.findAll();
+    //     allCourses.removeIf(course -> (!course.getSubject().equals(subject_name)));
+    //     return allCourses;
+    // }
 
-    @RequestMapping("/subjects/{subject_name}/{number}") // Returns the info of one course (e.g. CS 101: "title: Intro
-                                                         // Computing: ...", "credit: 3", "prereq: if any", "concur: if
-                                                         // any", "equiv: if any")
-    public CourseDTO getCourseInfo(@PathVariable(name = "subject_name") String subject_name, @PathVariable(name = "number") String number) {
-        List<CourseDTO> getDesiredCourse = getCoursesFromSubjectX(subject_name);
-        getDesiredCourse.removeIf(course->(!course.getNumber().equals(number)));
-        if (getDesiredCourse.size() == 0) {
-            return new CourseDTO();
+    // @RequestMapping("/subjects/{subject_name}/{number}") // Returns the info of one course (e.g. CS 101: "title: Intro
+    //                                                      // Computing: ...", "credit: 3", "prereq: if any", "concur: if
+    //                                                      // any", "equiv: if any")
+    // public CourseDTO getCourseInfo(@PathVariable(name = "subject_name") String subject_name, @PathVariable(name = "number") String number) {
+    //     List<CourseDTO> getDesiredCourse = getCoursesFromSubjectX(subject_name);
+    //     getDesiredCourse.removeIf(course->(!course.getNumber().equals(number)));
+    //     if (getDesiredCourse.size() == 0) {
+    //         return new CourseDTO();
+    //     }
+    //     return getDesiredCourse.get(0);
+    // }
+
+    @GetMapping("/search")
+    public CourseViewVO searchCourses(@RequestParam(name = "kw", required = true) String kw, @RequestParam(name = "subject", required = false) String subject) {
+        String[] splitkw = kw.split("\\s+");
+        CourseDTO searchResult;
+        if (subject != null) {
+            searchResult = courseDAO.findBySubjectAndNumber(subject, splitkw[1]);
+        } else {
+            searchResult = courseDAO.findBySubjectAndNumber(splitkw[0], splitkw[1]);
         }
-        return getDesiredCourse.get(0);
+        if (searchResult == null) {
+            return null;
+        }
+        return new CourseViewVO(searchResult);
     }
 }

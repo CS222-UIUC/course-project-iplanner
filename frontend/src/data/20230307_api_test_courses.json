@@ -13,7 +13,8 @@
         "6407d6c40f45cd3dddf4c534",
         "6407d6c40f45cd3dddf4c535",
         "6407d6c40f45cd3dddf4c536"
-    ]
+    ],
+    "pattern": ["none"]
   },
   {
     "id": "6407d6c40f45cd3dddf4c533",
@@ -29,7 +30,8 @@
     "subseq": [
         "6407d6c40f45cd3dddf4c535",
         "6407d6c40f45cd3dddf4c536"
-    ]
+    ],
+    "pattern": ["none"]
   },
   {
     "id": "6407d6c40f45cd3dddf4c534",
@@ -48,7 +50,8 @@
     "subseq": [
         "6407d6c40f45cd3dddf4c535",
         "6407d6c40f45cd3dddf4c536"
-    ]
+    ],
+    "pattern": ["not_recent"]
   },
   {
     "id": "6407d6c40f45cd3dddf4c535",
@@ -68,7 +71,8 @@
     ],
     "subseq": [
         "6407d6c40f45cd3dddf4c536"
-    ]
+    ],
+    "pattern": ["sp_only"]
   },
   {
     "id": "6407d6c40f45cd3dddf4c536",
@@ -84,6 +88,7 @@
         "6407d6c40f45cd3dddf4c533",
         "6407d6c40f45cd3dddf4c534"
     ],
-    "subseq": []
+    "subseq": [],
+    "pattern": ["fa_only"]
   }
 ]

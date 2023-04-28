@@ -281,7 +281,7 @@ public class DataLoadService {
         // otherwise, there is no obvious pattern for this course
         return "none";
     }
-
+    
     public void resetDatabase() throws StreamReadException, DatabindException, IOException {
         courseDAO.deleteAll();
     }
