@@ -1,6 +1,6 @@
-import { CardCtx, Course, CourseCtx } from "../App";
+import { CardCtx, Course, AppCtx } from "../App";
 import "./CourseCard.css";
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import Card from 'react-bootstrap/Card';
 import { MouseEvent, useContext, CSSProperties } from "react";
 import { ExclamationTriangle, Search, XSquare } from 'react-bootstrap-icons';
@@ -10,7 +10,7 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 function CourseCard({ course, style, desc, setDesc }: { course: Course, style: CSSProperties, desc: string, setDesc: Function }) {
   const relHighlighted = useRef<string[]>([]);
   const { cardStates } = useContext(CardCtx);
-  const allCourses = useContext(CourseCtx);
+  const allCourses = useContext(AppCtx);
   const { setRelation, clearRelation } = useCardActions();
 
   const description = (event : MouseEvent) => {
@@ -143,4 +143,4 @@ function CourseCard({ course, style, desc, setDesc }: { course: Course, style: C
   )
 }
 
-export default CourseCard;
+export default memo(CourseCard);

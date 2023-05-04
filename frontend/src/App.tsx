@@ -1,4 +1,4 @@
-import { createContext, Dispatch, useEffect, useReducer, useState } from 'react';
+import { createContext, Dispatch, useEffect, useReducer, useState, Profiler } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -7,7 +7,7 @@ import { Container } from 'react-bootstrap';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 import PlanTable from './components/PlanTable';
-import { CardAction, cardReducer, CardState } from './utils/CardActions';
+import { CardAction, cardReducer, CardState, Pattern } from './utils/CardActions';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -25,7 +25,7 @@ export interface Course {
   concur: string[],
   prereq: string[],
   subseq: string[],
-  pattern: string[],
+  pattern: Pattern,
   description: string
 }
 
@@ -39,7 +39,8 @@ const emptyCardCtxType: CardCtxType = {
   cardDispatch: (arg: CardAction) => { }
 };
 export const CardCtx = createContext(emptyCardCtxType);
-export const CourseCtx = createContext<Record<string, Course>>({});
+
+export const AppCtx = createContext<Record<string, Course>>({});
 
 
 function LoginForm() {
@@ -86,15 +87,22 @@ function App() {
 
   // Execute on mount
   useEffect(() => {
-    setAllCourses(data.reduce((dict: Record<string, Course>, course: Course) => {
-      dict[course.id] = course;
-      return dict;
-    }, {}));
+    let xhr = new XMLHttpRequest();
+
+    xhr.onload = function(event: ProgressEvent<EventTarget>)  {
+      console.log("Finished loading data!");
+      setAllCourses(JSON.parse(this.responseText).reduce((dict: Record<string, Course>, course: Course) => {
+        dict[course.id] = course;
+        return dict;
+      }, {}));
+    };
+    xhr.open('GET', 'http://localhost:1123/api/course/');
+    xhr.send();
   }, []);
 
   return (
     <Container fluid>
-      <CourseCtx.Provider value={allCourses}>
+      <AppCtx.Provider value={allCourses}>
         <CardCtx.Provider value={{ cardStates, cardDispatch }}>
           <Row className="mt-2" style={{ height: "70vh" }}>
             <Col xs={10}>
@@ -114,7 +122,7 @@ function App() {
             <b>Course Description:</b> {description}
           </Row>
         </CardCtx.Provider>
-      </CourseCtx.Provider>
+      </AppCtx.Provider>
     </Container>
   )
 }

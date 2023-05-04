@@ -1,7 +1,7 @@
-import { SetStateAction, useContext, useEffect, useState } from "react";
+import { SetStateAction, memo, useContext, useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { ReactSortable } from "react-sortablejs";
-import { Course, CourseCtx } from "../App";
+import { Course, AppCtx } from "../App";
 import CourseCard from "./CourseCard";
 import useCardActions from "../utils/CardActions";
 import { Pattern } from "../utils/CardActions";
@@ -33,7 +33,7 @@ function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
 
   // if allCourses list is reloaded, restart planning
   // TODO: change to "reload plan" instead of wiping the plan
-  const allCourses = useContext(CourseCtx);
+  const allCourses = useContext(AppCtx);
   useEffect(() => {
     setCoursePlan(new Array(NUM_SEMESTERS).fill([]));
   }, [allCourses]);
@@ -65,27 +65,26 @@ function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
     // determine pattern warnings
     coursePlan.forEach((sem, semIdx) => {
       sem.forEach((course) => {
-        course.pattern.forEach((pattern) => {
-          if (pattern === "fa_only") {
-            if (semIdx % 2 !== 0) {
-              setPattern(course.id, pattern as Pattern);
-            }
-            else {
-              setPattern(course.id, "none");
-            }
-          }
-          else if (pattern === "sp_only") {
-            if (semIdx % 2 !== 1) {
-              setPattern(course.id, pattern as Pattern);
-            }
-            else {
-              setPattern(course.id, "none");
-            }
-          }
-          else if (pattern === "not_recent" || pattern === "none") {
+        const pattern = course.pattern;
+        if (pattern === "fa_only") {
+          if (semIdx % 2 !== 0) {
             setPattern(course.id, pattern as Pattern);
           }
-        })
+          else {
+            setPattern(course.id, "none");
+          }
+        }
+        else if (pattern === "sp_only") {
+          if (semIdx % 2 !== 1) {
+            setPattern(course.id, pattern as Pattern);
+          }
+          else {
+            setPattern(course.id, "none");
+          }
+        }
+        else if (pattern === "not_recent" || pattern === "none") {
+          setPattern(course.id, pattern as Pattern);
+        }
       })
     });
 
@@ -105,7 +104,7 @@ function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
               <Row className="justify-content-center align-items-center h5">{yearLabel}</Row>
               <Row className="justify-content-center align-items-center h6">
                 {semIdxs.map((semIdx) => (
-                  <Col>
+                  <Col key={"sem" + semIdx}>
                     Total Credits: {getColumnCredits(coursePlan, semIdx)}
                   </Col>
                 ))}
@@ -130,4 +129,4 @@ function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
   )
 }
 
-export default PlanTable;
+export default memo(PlanTable);
