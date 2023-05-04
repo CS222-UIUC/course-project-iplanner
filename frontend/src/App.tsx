@@ -7,7 +7,7 @@ import { Container } from 'react-bootstrap';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 import PlanTable from './components/PlanTable';
-import { CardAction, cardReducer, CardState } from './utils/CardActions';
+import { CardAction, cardReducer, CardState, Pattern } from './utils/CardActions';
 
 export interface Course {
   id: string,
@@ -19,7 +19,7 @@ export interface Course {
   concur: string[],
   prereq: string[],
   subseq: string[],
-  pattern: string[],
+  pattern: Pattern,
   description: string
 }
 

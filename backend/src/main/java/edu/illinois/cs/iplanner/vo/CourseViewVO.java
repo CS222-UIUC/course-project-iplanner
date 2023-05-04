@@ -25,6 +25,8 @@ public class CourseViewVO {
 
     private List<String> equiv;
 
+    private String pattern;
+
     public CourseViewVO(CourseDTO courseDTO) {
         this.id = courseDTO.getId();
         this.subject = courseDTO.getSubject();
@@ -34,5 +36,6 @@ public class CourseViewVO {
         this.prereq = courseDTO.getPrereq();
         this.concur = courseDTO.getConcur();
         this.equiv = courseDTO.getEquiv();
+        this.pattern = courseDTO.getPattern();
     };
 }
