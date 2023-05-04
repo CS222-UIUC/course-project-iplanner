@@ -13,13 +13,13 @@ function CourseCard({ course, style, desc, setDesc }: { course: Course, style: C
   const allCourses = useContext(CourseCtx);
   const { setRelation, clearRelation } = useCardActions();
 
-  // Use allCourses to determine relations. prereq|concur|equiv are provided.
-  // Calculate prerequisite chain (prechn). Also set the current hovered course
-  // to "curr". Use setRelation(course_id, relation) to set the relations.
   const description = (event : MouseEvent) => {
     setDesc((course.title + " | Credits: " + course.credit + " | " + course.description));
   };
 
+  // Use allCourses to determine relations. prereq|concur|equiv are provided.
+  // Calculate prerequisite chain (prechn). Also set the current hovered course
+  // to "curr". Use setRelation(course_id, relation) to set the relations.
   const calcRelations = (event: MouseEvent) => {
     let prechn: string[] = [];
     const queue = [course.id];
@@ -35,7 +35,6 @@ function CourseCard({ course, style, desc, setDesc }: { course: Course, style: C
         prechn.push(Ids);
       }
     }
-
     for (const itr of course.equiv) {
       setRelation(itr, "equiv");
       relHighlighted.current.push(itr);

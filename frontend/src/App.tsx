@@ -41,6 +41,7 @@ export const CourseCtx = createContext<Record<string, Course>>({});
 function App() {
   const [cardStates, cardDispatch] = useReducer(cardReducer, {});
   const [allCourses, setAllCourses] = useState<Record<string, Course>>({});
+  const [description, setDescription] = useState("");
 
   // Execute on mount
   useEffect(() => {
@@ -56,11 +57,14 @@ function App() {
         <CardCtx.Provider value={{ cardStates, cardDispatch }}>
           <Row className="mt-2">
             <Col xs={10}>
-              <PlanTable />
+              <PlanTable desc={description} setDesc={setDescription}/>
             </Col>
             <Col xs={2}>
               <SearchBar />
             </Col>
+          </Row>
+          <Row>
+            {description}
           </Row>
         </CardCtx.Provider>
       </CourseCtx.Provider>

@@ -28,9 +28,8 @@ function getColumnCredits(coursePlan: Course[][], sem: number): number {
   return credits;
 }
 
-function PlanTable() {
+function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
   const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
-  const [desc, setDesc] = useState("");
 
   // if allCourses list is reloaded, restart planning
   // TODO: change to "reload plan" instead of wiping the plan
@@ -126,9 +125,6 @@ function PlanTable() {
             </Col>
           )
         })}
-      </Row>
-      <Row className = "fixed-bottom">
-        {desc}
       </Row>
     </Container>
   )
