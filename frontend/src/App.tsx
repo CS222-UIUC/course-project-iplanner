@@ -8,6 +8,8 @@ import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 import PlanTable from './components/PlanTable';
 import { CardAction, cardReducer, CardState } from './utils/CardActions';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 // TODO: FE testing only, change to api call in useEffect onMount function
 import data from "./data/20230307_api_test_courses.json";
@@ -38,6 +40,26 @@ const emptyCardCtxType: CardCtxType = {
 export const CardCtx = createContext(emptyCardCtxType);
 export const CourseCtx = createContext<Record<string, Course>>({});
 
+
+function LoginForm() {
+  return (
+    <Form>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <h4>Login:</h4>
+        <Form.Label>Email address</Form.Label>
+        <Form.Control type="email" placeholder="Enter email" />
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Label>Password</Form.Label>
+        <Form.Control type="password" placeholder="Password" />
+      </Form.Group>
+      <Button variant="primary" type="submit">
+        Submit
+      </Button>
+    </Form>
+  );
+}
+
 function App() {
   const [cardStates, cardDispatch] = useReducer(cardReducer, {});
   const [allCourses, setAllCourses] = useState<Record<string, Course>>({});
@@ -60,10 +82,11 @@ function App() {
               <PlanTable desc={description} setDesc={setDescription} />
             </Col>
             <Col xs={2}>
-              <SearchBar desc={description} setDesc={setDescription} />
+              <Row style={{ height: "60vh", padding: "5px" }}><SearchBar desc={description} setDesc={setDescription} /></Row>
+              <Row style={{ height: "40vh", padding: "5px" }}><LoginForm /></Row>  
             </Col>
           </Row>
-          <Row style={{ height: "30vh", padding: "10px" }}>
+          <Row style={{ height: "30vh", width: "83vw", padding: "10px" }}>
             <b>Legend:</b>
             <h6 className="curr">This colored course is the current course being hovered over.</h6>
             <h6 className="prereq">These colored courses are a prerequisite of the current course.</h6>
