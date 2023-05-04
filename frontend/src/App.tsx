@@ -9,8 +9,6 @@ import Col from 'react-bootstrap/esm/Col';
 import PlanTable from './components/PlanTable';
 import { CardAction, cardReducer, CardState } from './utils/CardActions';
 
-// import data from "./data/20230307_api_test_courses.json";
-
 export interface Course {
   id: string,
   subject: string,
@@ -52,37 +50,25 @@ function App() {
         return dict;
       }, {}));
     };
-    xhr.open('GET', 'http://localhost:1123/api/course/2020-fa'); // TODO should be based on current sem/dropdown value
+    xhr.open('GET', 'http://localhost:1123/api/course/');
     xhr.send();
   }, []);
 
-  const profilerCallback = function(id: string,
-    phase: 'mount' | 'update',
-    actualDuration: number,
-    baseDuration: number,
-    startTime: number,
-    commitTime: number,
-    interactions: Set<any>) {
-    console.log(`${id} ${phase} took ${actualDuration} ms`);
-  }
-
   return (
-    <Profiler id="searchBarProfiler" onRender={profilerCallback}>
-      <Container fluid>
-        <AppCtx.Provider value={allCourses}>
-          <CardCtx.Provider value={{ cardStates, cardDispatch }}>
-            <Row className="mt-2">
-              <Col xs={10}>
-                <PlanTable />
-              </Col>
-              <Col xs={2}>
-                <SearchBar />
-              </Col>
-            </Row>
-          </CardCtx.Provider>
-        </AppCtx.Provider>
-      </Container>
-    </Profiler>
+    <Container fluid>
+      <AppCtx.Provider value={allCourses}>
+        <CardCtx.Provider value={{ cardStates, cardDispatch }}>
+          <Row className="mt-2">
+            <Col xs={10}>
+              <PlanTable />
+            </Col>
+            <Col xs={2}>
+              <SearchBar />
+            </Col>
+          </Row>
+        </CardCtx.Provider>
+      </AppCtx.Provider>
+    </Container>
   )
 }
 
