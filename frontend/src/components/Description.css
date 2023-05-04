@@ -1,0 +1,5 @@
+.fixed-bottom {
+    position: fixed;
+    bottom: 100;
+    padding: 20px;
+  }

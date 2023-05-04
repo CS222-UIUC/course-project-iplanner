@@ -14,7 +14,8 @@
         "6407d6c40f45cd3dddf4c535",
         "6407d6c40f45cd3dddf4c536"
     ],
-    "pattern": ["none"]
+    "pattern": ["none"],
+    "description": "This is the description for CS124."
   },
   {
     "id": "6407d6c40f45cd3dddf4c533",
@@ -31,7 +32,8 @@
         "6407d6c40f45cd3dddf4c535",
         "6407d6c40f45cd3dddf4c536"
     ],
-    "pattern": ["none"]
+    "pattern": ["none"],
+    "description": "This is the description for CS128."
   },
   {
     "id": "6407d6c40f45cd3dddf4c534",
@@ -51,7 +53,8 @@
         "6407d6c40f45cd3dddf4c535",
         "6407d6c40f45cd3dddf4c536"
     ],
-    "pattern": ["not_recent"]
+    "pattern": ["not_recent"],
+    "description": "This is the description for CS173."
   },
   {
     "id": "6407d6c40f45cd3dddf4c535",
@@ -72,7 +75,8 @@
     "subseq": [
         "6407d6c40f45cd3dddf4c536"
     ],
-    "pattern": ["sp_only"]
+    "pattern": ["sp_only"],
+    "description": "This is the description for CS225."
   },
   {
     "id": "6407d6c40f45cd3dddf4c536",
@@ -89,6 +93,7 @@
         "6407d6c40f45cd3dddf4c534"
     ],
     "subseq": [],
-    "pattern": ["fa_only"]
+    "pattern": ["fa_only"],
+    "description": "This is the description for CS233."
   }
 ]

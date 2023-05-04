@@ -7,11 +7,15 @@ import { ExclamationTriangle, Search, XSquare } from 'react-bootstrap-icons';
 import useCardActions from "../utils/CardActions";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
-function CourseCard({ course, style }: { course: Course, style: CSSProperties }) {
+function CourseCard({ course, style, desc, setDesc }: { course: Course, style: CSSProperties, desc: string, setDesc: Function }) {
   const relHighlighted = useRef<string[]>([]);
   const { cardStates } = useContext(CardCtx);
   const allCourses = useContext(AppCtx);
   const { setRelation, clearRelation } = useCardActions();
+
+  const description = (event : MouseEvent) => {
+    setDesc((course.title + " | Credits: " + course.credit + " | " + course.description));
+  };
 
   // Use allCourses to determine relations. prereq|concur|equiv are provided.
   // Calculate prerequisite chain (prechn). Also set the current hovered course
@@ -31,7 +35,6 @@ function CourseCard({ course, style }: { course: Course, style: CSSProperties })
         prechn.push(Ids);
       }
     }
-
     for (const itr of course.equiv) {
       setRelation(itr, "equiv");
       relHighlighted.current.push(itr);
@@ -88,7 +91,7 @@ function CourseCard({ course, style }: { course: Course, style: CSSProperties })
     }
     return (
       <Tooltip>
-        { message }
+        {message}
       </Tooltip>
     )
   }
@@ -96,7 +99,7 @@ function CourseCard({ course, style }: { course: Course, style: CSSProperties })
   return (
     <div style={style}>
       <Card key={course.id} className={"shadow fs-6 h-100 " + cardStates[course.id]?.relation?.toLowerCase()}
-            onMouseEnter={calcRelations} onMouseLeave={clearRelations}>
+        onMouseEnter={calcRelations} onMouseLeave={clearRelations} onClick={description}>
         <Card.Body>
           <div className="h6">
             {`${course.subject} ${course.number}`}
@@ -106,19 +109,19 @@ function CourseCard({ course, style }: { course: Course, style: CSSProperties })
           </div>
         </Card.Body>
         <div style={{ position: "absolute", bottom: "10px", right: "10px" }}>
-        {
-          // searched icon on top-right of card
-          cardStates[course.id]?.searched ?
-            (<Search className="text-primary" />) :
-            null
-        }
+          {
+            // searched icon on top-right of card
+            cardStates[course.id]?.searched ?
+              (<Search className="text-primary" />) :
+              null
+          }
         </div>
         <div style={{ position: "absolute", top: "10px", right: "10px" }}>
           {
             cardStates[course.id]?.missing?.length > 0 ?
               (
                 <OverlayTrigger overlay={missingTooltip(course.id)}>
-                  <XSquare className="text-danger"/>
+                  <XSquare className="text-danger" />
                 </OverlayTrigger>
               ) :
               null
@@ -129,7 +132,7 @@ function CourseCard({ course, style }: { course: Course, style: CSSProperties })
             cardStates[course.id]?.pattern && cardStates[course.id].pattern !== "none" ?
               (
                 <OverlayTrigger overlay={patternTooltip(course.id)}>
-                  <ExclamationTriangle className="text-warning"/>
+                  <ExclamationTriangle className="text-warning" />
                 </OverlayTrigger>
               ) :
               null

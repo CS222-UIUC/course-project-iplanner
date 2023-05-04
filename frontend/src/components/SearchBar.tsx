@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import useCardActions from "../utils/CardActions";
 import { Button } from "react-bootstrap";
 
-function SearchBar() {
+function SearchBar({desc, setDesc}:{desc: string, setDesc: Function}) {
   const { cardStates } = useContext(CardCtx);
 
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -17,7 +17,6 @@ function SearchBar() {
   };
 
   const [availCourses, setAvailCourses] = useState<Course[]>([]);
-
   // On change of allCourse (api call returns), set available Courses!
   const allCourses = useContext(AppCtx);
   useEffect(() => {
@@ -69,7 +68,7 @@ function SearchBar() {
       <ReactSortable list={availCourses} setList={setAvailCourses} group="courses">
         {availCourses?.map((course) => (
           <div key={course.id} className={cardStates[course.id]?.searched ? "" : "d-none"}>
-            <CourseCard course={course} style={{}}/>
+            <CourseCard course={course} style={{}} desc={desc} setDesc={setDesc} />
           </div>
         ))}
       </ReactSortable>

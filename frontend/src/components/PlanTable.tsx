@@ -5,6 +5,7 @@ import { Course, AppCtx } from "../App";
 import CourseCard from "./CourseCard";
 import useCardActions from "../utils/CardActions";
 import { Pattern } from "../utils/CardActions";
+import "./Description.css";
 
 const NUM_SEMESTERS = 8;
 type Dispatch<A> = (value: A) => void;
@@ -27,7 +28,7 @@ function getColumnCredits(coursePlan: Course[][], sem: number): number {
   return credits;
 }
 
-function PlanTable() {
+function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
   const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
 
   // if allCourses list is reloaded, restart planning
@@ -115,8 +116,7 @@ function PlanTable() {
                     <ReactSortable list={coursePlan[semIdx]} setList={setCoursePlanAtSem(setCoursePlan, semIdx)}
                       group="courses" swapThreshold={1.5}>
                       {coursePlan[semIdx]?.map((course) => (
-                        <CourseCard key={course.id} course={course}
-                          style={{ aspectRatio: "1/0.8" }} />
+                        <CourseCard key={course.id} course={course} style={{ aspectRatio: "1/0.8" }} desc={desc} setDesc={setDesc}/>
                       ))}
                     </ReactSortable>
                   </Col>
