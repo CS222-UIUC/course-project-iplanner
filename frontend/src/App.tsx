@@ -57,15 +57,19 @@ function App() {
         <CardCtx.Provider value={{ cardStates, cardDispatch }}>
           <Row className="mt-2" style={{ height: "70vh" }}>
             <Col xs={10}>
-              <PlanTable desc={description} setDesc={setDescription}/>
+              <PlanTable desc={description} setDesc={setDescription} />
             </Col>
             <Col xs={2}>
-              <SearchBar desc={description} setDesc={setDescription}/>
+              <SearchBar desc={description} setDesc={setDescription} />
             </Col>
           </Row>
-          <Row style={{ height: "30vh", padding: "10px"}}>
-            <p><b>Legend:</b></p>
-            <p><b>Course Description:</b> {description} </p>
+          <Row style={{ height: "30vh", padding: "10px" }}>
+            <b>Legend:</b>
+            <h6 className="curr">This colored course is the current course being hovered over.</h6>
+            <h6 className="prereq">These colored courses are a prerequisite of the current course.</h6>
+            <h6 className="concur">These colored courses are to be taken concurrently to the current course.</h6>
+            <h6 className="subseq">These colored courses are to be taken after the current course.</h6>
+            <b>Course Description:</b> {description}
           </Row>
         </CardCtx.Provider>
       </CourseCtx.Provider>
