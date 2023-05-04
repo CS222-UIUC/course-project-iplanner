@@ -10,6 +10,7 @@ import PlanTable from './components/PlanTable';
 import { CardAction, cardReducer, CardState } from './utils/CardActions';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
 
 // TODO: FE testing only, change to api call in useEffect onMount function
 import data from "./data/20230307_api_test_courses.json";
@@ -42,21 +43,39 @@ export const CourseCtx = createContext<Record<string, Course>>({});
 
 
 function LoginForm() {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   return (
-    <Form>
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <h4>Login:</h4>
-        <Form.Label>Email address</Form.Label>
-        <Form.Control type="email" placeholder="Enter email" />
-      </Form.Group>
-      <Form.Group className="mb-3" controlId="formBasicPassword">
-        <Form.Label>Password</Form.Label>
-        <Form.Control type="password" placeholder="Password" />
-      </Form.Group>
-      <Button variant="primary" type="submit">
-        Submit
+    <>
+      <Button variant="secondary" onClick={handleShow}>
+        Login
       </Button>
-    </Form>
+
+      <Modal show={show} onHide={handleClose} animation={true}>
+        <Modal.Header closeButton>
+          <Modal.Title>Login</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control type="email" placeholder="Enter email" />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control type="password" placeholder="Password" />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </>
+
   );
 }
 
@@ -82,8 +101,8 @@ function App() {
               <PlanTable desc={description} setDesc={setDescription} />
             </Col>
             <Col xs={2}>
-              <Row style={{ height: "60vh", padding: "5px" }}><SearchBar desc={description} setDesc={setDescription} /></Row>
-              <Row style={{ height: "40vh", padding: "5px" }}><LoginForm /></Row>  
+              <Row style={{ height: "5vh", padding: "5px" }}><SearchBar desc={description} setDesc={setDescription} /></Row>
+              <Row style={{ height: "10vh", padding: "20px" }}><LoginForm /></Row>
             </Col>
           </Row>
           <Row style={{ height: "30vh", width: "83vw", padding: "10px" }}>
