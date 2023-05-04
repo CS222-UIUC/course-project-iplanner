@@ -55,16 +55,17 @@ function App() {
     <Container fluid>
       <CourseCtx.Provider value={allCourses}>
         <CardCtx.Provider value={{ cardStates, cardDispatch }}>
-          <Row className="mt-2">
+          <Row className="mt-2" style={{ height: "70vh" }}>
             <Col xs={10}>
               <PlanTable desc={description} setDesc={setDescription}/>
             </Col>
             <Col xs={2}>
-              <SearchBar />
+              <SearchBar desc={description} setDesc={setDescription}/>
             </Col>
           </Row>
-          <Row>
-            {description}
+          <Row style={{ height: "30vh", padding: "10px"}}>
+            <p><b>Legend:</b></p>
+            <p><b>Course Description:</b> {description} </p>
           </Row>
         </CardCtx.Provider>
       </CourseCtx.Provider>

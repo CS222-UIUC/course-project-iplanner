@@ -7,13 +7,11 @@ import Container from "react-bootstrap/esm/Container";
 import Form from 'react-bootstrap/Form';
 import useCardActions from "../utils/CardActions";
 
-function SearchBar() {
+function SearchBar({desc, setDesc}:{desc: string, setDesc: Function}) {
   const { cardStates } = useContext(CardCtx);
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [availCourses, setAvailCourses] = useState<Course[]>([]);
-  const [desc, setDesc] = useState("");
-
   // On change of allCourse (api call returns), set available Courses!
   const allCourses = useContext(CourseCtx);
   useEffect(() => {
