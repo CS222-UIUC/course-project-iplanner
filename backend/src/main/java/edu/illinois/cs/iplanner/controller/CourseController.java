@@ -7,6 +7,7 @@ import javax.naming.directory.SearchResult;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.time.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-
 
 import edu.illinois.cs.iplanner.dao.CourseDAO;
 import edu.illinois.cs.iplanner.model.CourseDTO;
@@ -44,6 +43,18 @@ public class CourseController {
         dataLoadService.resetDatabase();
     }
     
+    @RequestMapping("/")
+    public List<CourseViewVO> getAllCourses() {
+        //get courses from the most recent 5 years
+        Month now = LocalDateTime.now(ZoneId.of("America/Chicago")).getMonth();
+        int fiveYearAgo = LocalDateTime.now(ZoneId.of("America/Chicago")).getYear() - 4;
+        if (now.compareTo(Month.APRIL) >= 0 && now.compareTo(Month.NOVEMBER) <= 0) {
+            return getAllCourses(Integer.toString(fiveYearAgo) + "-fa");
+        } else {
+            return getAllCourses(Integer.toString(fiveYearAgo) + "-sp");
+        }
+    }
+
     @RequestMapping("/{semester}")
     public List<CourseViewVO> getAllCourses(@PathVariable(name = "semester") String semester) {
         List<CourseDTO> courses = courseDAO.findAll();
