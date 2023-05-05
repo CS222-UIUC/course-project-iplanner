@@ -102,10 +102,10 @@ function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
           return (
             <Col key={yearLabel + yearIdx} className="border-end border-2">
               <Row className="justify-content-center align-items-center h5">{yearLabel}</Row>
-              <Row className="justify-content-center align-items-center h6">
+              <Row className="justify-content-center align-items-center h6 text-center">
                 {semIdxs.map((semIdx) => (
                   <Col key={"sem" + semIdx}>
-                    Total Credits: {getColumnCredits(coursePlan, semIdx)}
+                    Credits: {getColumnCredits(coursePlan, semIdx)}
                   </Col>
                 ))}
               </Row>

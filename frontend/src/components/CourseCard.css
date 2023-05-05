@@ -1,20 +1,20 @@
 .none {
-    background-color: #ffffff;
+    background-color: #ffffff !important;
 }
 
 .prereq {
-    background-color: #31df6b;
+    background-color: #31df6b !important;
 }
 
 .curr {
-    background-color: #ff8d4b;
+    background-color: #ff8d4b !important;
 }
 
 .concur {
-    background-color: #b194e8;
+    background-color: #b194e8 !important;
 }
 
 .subseq {
-    background-color: #5ab0de;
+    background-color: #5ab0de !important;
 }
 

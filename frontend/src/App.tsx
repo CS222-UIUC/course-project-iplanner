@@ -3,7 +3,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import SearchBar from './components/SearchBar';
-import { Container, Stack } from 'react-bootstrap';
+import { Badge, Container, Stack } from 'react-bootstrap';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 import PlanTable from './components/PlanTable';
@@ -14,6 +14,7 @@ import Modal from 'react-bootstrap/Modal';
 
 // TODO: FE testing only, change to api call in useEffect onMount function
 import data from "./data/20230307_api_test_courses.json";
+import LoginForm from './components/LoginForm';
 
 export interface Course {
   id: string,
@@ -41,43 +42,6 @@ const emptyCardCtxType: CardCtxType = {
 export const CardCtx = createContext(emptyCardCtxType);
 
 export const AppCtx = createContext<Record<string, Course>>({});
-
-
-function LoginForm() {
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  return (
-    <Container fluid>
-      <Button variant="secondary" onClick={handleShow}>
-        Login
-      </Button>
-
-      <Modal show={show} onHide={handleClose} animation={true}>
-        <Modal.Header closeButton>
-          <Modal.Title>Login</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control type="email" placeholder="Enter email" />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" placeholder="Password" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
-    </Container>
-  );
-}
 
 function App() {
   const [cardStates, cardDispatch] = useReducer(cardReducer, {});
@@ -108,14 +72,16 @@ function App() {
               <div style={{ height: "70vh" }}>
                 <PlanTable desc={description} setDesc={setDescription} />
               </div>
-              <Row style={{ height: "25vh", width: "83vw", padding: "10px" }}>
-                <b>Legend:</b>
-                <h6 className="curr">This colored course is the current course being hovered over.</h6>
-                <h6 className="prereq">These colored courses are a prerequisite of the current course.</h6>
-                <h6 className="concur">These colored courses are to be taken concurrently to the current course.</h6>
-                <h6 className="subseq">These colored courses are to be taken after the current course.</h6>
+              <div className="d-flex align-items-center">
+                <b className="me-2">Legend:</b>
+                <Badge className="curr me-1">Current Course</Badge>
+                <Badge className="prereq me-1">Prerequisite</Badge>
+                <Badge className="concur me-1">Concurrent</Badge>
+                <Badge className="subseq me-1">Subsequent</Badge>
+              </div>
+              <div>
                 <b>Course Description:</b> {description}
-              </Row>
+              </div>
             </Col>
             <Col xs={2}>
                 <LoginForm />
