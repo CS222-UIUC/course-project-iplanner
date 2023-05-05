@@ -3,7 +3,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import SearchBar from './components/SearchBar';
-import { Container } from 'react-bootstrap';
+import { Container, Stack } from 'react-bootstrap';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 import PlanTable from './components/PlanTable';
@@ -22,8 +22,8 @@ export interface Course {
   title: string,
   credit: number,
   equiv: string[],
-  concur: string[],
-  prereq: string[],
+  concur: string[][],
+  prereq: string[][],
   subseq: string[],
   pattern: Pattern,
   description: string
@@ -49,7 +49,7 @@ function LoginForm() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   return (
-    <>
+    <Container fluid>
       <Button variant="secondary" onClick={handleShow}>
         Login
       </Button>
@@ -75,8 +75,7 @@ function LoginForm() {
           </Form>
         </Modal.Body>
       </Modal>
-    </>
-
+    </Container>
   );
 }
 
@@ -104,22 +103,24 @@ function App() {
     <Container fluid>
       <AppCtx.Provider value={allCourses}>
         <CardCtx.Provider value={{ cardStates, cardDispatch }}>
-          <Row className="mt-2" style={{ height: "70vh" }}>
+          <Row className="mt-2">
             <Col xs={10}>
-              <PlanTable desc={description} setDesc={setDescription} />
+              <div style={{ height: "70vh" }}>
+                <PlanTable desc={description} setDesc={setDescription} />
+              </div>
+              <Row style={{ height: "25vh", width: "83vw", padding: "10px" }}>
+                <b>Legend:</b>
+                <h6 className="curr">This colored course is the current course being hovered over.</h6>
+                <h6 className="prereq">These colored courses are a prerequisite of the current course.</h6>
+                <h6 className="concur">These colored courses are to be taken concurrently to the current course.</h6>
+                <h6 className="subseq">These colored courses are to be taken after the current course.</h6>
+                <b>Course Description:</b> {description}
+              </Row>
             </Col>
             <Col xs={2}>
-              <Row style={{ height: "5vh", padding: "5px" }}><SearchBar desc={description} setDesc={setDescription} /></Row>
-              <Row style={{ height: "10vh", padding: "20px" }}><LoginForm /></Row>
+                <LoginForm />
+                <SearchBar desc={description} setDesc={setDescription} />
             </Col>
-          </Row>
-          <Row style={{ height: "30vh", width: "83vw", padding: "10px" }}>
-            <b>Legend:</b>
-            <h6 className="curr">This colored course is the current course being hovered over.</h6>
-            <h6 className="prereq">These colored courses are a prerequisite of the current course.</h6>
-            <h6 className="concur">These colored courses are to be taken concurrently to the current course.</h6>
-            <h6 className="subseq">These colored courses are to be taken after the current course.</h6>
-            <b>Course Description:</b> {description}
           </Row>
         </CardCtx.Provider>
       </AppCtx.Provider>

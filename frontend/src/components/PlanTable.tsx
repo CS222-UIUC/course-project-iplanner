@@ -49,13 +49,14 @@ function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
       sem.forEach((course) => {
         let missingCourses: string[] = [];
         course.concur.forEach((concur) => {
-          if (!planUpToSem.some((semester: Course[]) => semester.some((c: Course) => c.id === concur))) {
-            missingCourses.push(concur);
+          if (!planUpToSem.some((semester: Course[]) => semester.some((c: Course) => concur.includes(c.id)))) {
+            //if (!planUpToSem.some((semester: Course[]) => semester.some((c: Course) => concur.some((itr: string) => c.id === itr)))) {
+            concur.forEach(itr => {missingCourses.push(itr);});
           }
         });
         course.prereq.forEach((prereq) => {
-          if (!planUpToSem.slice(0, -1).some((semester: Course[]) => semester.some((c: Course) => c.id === prereq))) {
-            missingCourses.push(prereq);
+          if (!planUpToSem.slice(0, -1).some((semester: Course[]) => semester.some((c: Course) => prereq.includes(c.id)))) {
+            prereq.forEach(itr => { missingCourses.push(itr);});
           }
         });
         setMissing(course.id, missingCourses);

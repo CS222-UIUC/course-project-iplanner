@@ -13,7 +13,7 @@ function CourseCard({ course, style, desc, setDesc }: { course: Course, style: C
   const allCourses = useContext(AppCtx);
   const { setRelation, clearRelation } = useCardActions();
 
-  const description = (event : MouseEvent) => {
+  const description = (event: MouseEvent) => {
     setDesc((course.title + " | Credits: " + course.credit + " | " + course.description));
   };
 
@@ -21,30 +21,36 @@ function CourseCard({ course, style, desc, setDesc }: { course: Course, style: C
   // Calculate prerequisite chain (prechn). Also set the current hovered course
   // to "curr". Use setRelation(course_id, relation) to set the relations.
   const calcRelations = (event: MouseEvent) => {
-    let prechn: string[] = [];
-    const queue = [course.id];
-
+    let prechn: string[][] = [];
+    const queue = [[course.id]];
     while (queue.length !== 0) {
-      const cId = queue.shift()!;
-      const cCourse = allCourses[cId];
-
-      for (const Ids of cCourse.prereq) {
-        queue.push(Ids);
-        setRelation(Ids, "prechn");
-        relHighlighted.current.push(Ids);
-        prechn.push(Ids);
+      const cIdArr = queue.shift()!;
+      for (const cId of cIdArr) {
+        const cCourse = allCourses[cId];
+        for (const Ids of cCourse.prereq) {
+          queue.push(Ids);
+          for (const itr of Ids) {
+            setRelation(itr, "prechn");
+            relHighlighted.current.push(itr);
+          }
+          prechn.push(Ids);
+        }
       }
     }
     for (const itr of course.equiv) {
       setRelation(itr, "equiv");
       relHighlighted.current.push(itr);
     }
-    for (const itr of course.concur) {
-      setRelation(itr, "concur");
-      relHighlighted.current.push(itr);
+    for (const itrarr of course.concur) {
+      for (const itr of itrarr) {
+        setRelation(itr, "concur");
+        relHighlighted.current.push(itr);
+      }
     }
-    for (const itr of course.prereq) {
-      setRelation(itr, "prereq");
+    for (const itrarr of course.prereq) {
+      for (const itr of itrarr) {
+        setRelation(itr, "prereq");
+      }
     }
     for (const itr of course.equiv) {
       setRelation(itr, "equiv");
