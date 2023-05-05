@@ -23,8 +23,8 @@ export interface Course {
   title: string,
   credit: number,
   equiv: string[],
-  concur: string[],
-  prereq: string[],
+  concur: string[][],
+  prereq: string[][],
   subseq: string[],
   pattern: Pattern,
   description: string
