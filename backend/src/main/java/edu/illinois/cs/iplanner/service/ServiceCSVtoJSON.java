@@ -12,6 +12,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.*;
 
 public class ServiceCSVtoJSON {
+
+    //temporary course name indicating which course is being worked on
+    private String tempCourseName;
+
     /**
      * 
      * @param csvInpString  source file path
@@ -52,6 +56,10 @@ public class ServiceCSVtoJSON {
             Map<String, String> row = (Map<String, String>) object_row;
             String subject = row.get("Subject");
             String number = row.get("Number");
+
+            //update private variable
+            tempCourseName = subject + " " + number;
+
             //this block should be removed when sections of a course are included
             if (lastCourse.equals(subject + number)) {
                 continue;
@@ -177,7 +185,7 @@ public class ServiceCSVtoJSON {
             try {
                 Integer.parseInt(word);
                 String course = words[i - 1] + " " + word;
-                courses.add(course);
+                if (!course.equals(tempCourseName)) courses.add(course);
             } catch (Exception e) {}
 
             if (push) {
@@ -210,7 +218,7 @@ public class ServiceCSVtoJSON {
             try {
                 Integer.parseInt(words[i]);
                 String course = words[i - 1] + " " + words[i];
-                sameAS.add(course);
+                if (!course.equals(tempCourseName)) sameAS.add(course);
             } catch (Exception e) {
                 continue;
             }
@@ -222,7 +230,7 @@ public class ServiceCSVtoJSON {
             try {
                 Integer.parseInt(words[i]);
                 String course = words[i - 1] + " " + words[i];
-                equivalent.add(course);
+                if (!course.equals(tempCourseName)) equivalent.add(course);
             } catch (Exception e) {
                 continue;
             }
