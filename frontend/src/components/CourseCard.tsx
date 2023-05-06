@@ -1,4 +1,4 @@
-import { CardCtx, Course, AppCtx } from "../App";
+import { CardCtx, Course, AppCtx, DescCtx } from "../App";
 import "./CourseCard.css";
 import { memo, useRef } from 'react';
 import Card from 'react-bootstrap/Card';
@@ -7,14 +7,15 @@ import { ExclamationTriangle, Search, XSquare } from 'react-bootstrap-icons';
 import useCardActions from "../utils/CardActions";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
-function CourseCard({ course, style, desc, setDesc, compact }: { course: Course, style?: CSSProperties, desc: string, setDesc: Function, compact?: boolean }) {
+function CourseCard({ course, style, compact }: { course: Course, style?: CSSProperties, compact?: boolean }) {
   const relHighlighted = useRef<string[]>([]);
   const { cardStates } = useContext(CardCtx);
   const allCourses = useContext(AppCtx);
   const { setRelation, clearRelation } = useCardActions();
 
+  const { id: descId, setId: setDescId } = useContext(DescCtx);
   const description = (event: MouseEvent) => {
-    setDesc((course.title + " | Credits: " + course.credit + " | " + course.description));
+    setDescId(course.id);
   };
 
   // Use allCourses to determine relations. prereq|concur|equiv are provided.
@@ -56,8 +57,8 @@ function CourseCard({ course, style, desc, setDesc, compact }: { course: Course,
           cardStates[courseId].missing?.reduce((msg: string, prereqList: string[], listIndex: number) => {
             const courseListMsg = prereqList.reduce((listMsg: string, courseId: string, index: number) => {
               const course = allCourses[courseId];
-              return listMsg + (index == 0 ? 'One of ' : '/') + `${course.subject} ${course.number}`;
-            }, "");
+              return listMsg + (index == 0 ? '' : '/') + `${course.subject} ${course.number}`;
+            }, prereqList.length > 1 ? "One of " : "");
             return msg + (listIndex == 0 ? '' : '; ') + courseListMsg;
           }, "Missing requirement(s): ")
         }

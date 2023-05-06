@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import useCardActions from "../utils/CardActions";
 import { Button } from "react-bootstrap";
 
-function SearchBar({desc, setDesc}:{desc: string, setDesc: Function}) {
+function SearchBar() {
   const { cardStates } = useContext(CardCtx);
 
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -35,6 +35,7 @@ function SearchBar({desc, setDesc}:{desc: string, setDesc: Function}) {
   }, [searchTerm]);
 
   const searchCourse = () => {
+    setMoreResults(false);
     searchHighlight.forEach(courseId => {
       cardStates[courseId].searched = false;
     });
@@ -82,14 +83,15 @@ function SearchBar({desc, setDesc}:{desc: string, setDesc: Function}) {
         <Form.Control type="text" placeholder="Search Course..." value={searchTerm} onChange={handleInputChange} />
         {/* <Button variant="primary" onClick={searchCourse}>Submit</Button> */}
       </Form>
-      <div style={{ height: "100%", overflowY: "scroll" }}>
+      <div style={{ height: "90vh", overflowY: "auto" }}>
         <ReactSortable list={availCourses} setList={setAvailCourses} group="courses">
           {availCourses?.map((course) => (
             <div key={course.id} className={cardStates[course.id]?.searched ? "" : "d-none"}>
-              <CourseCard course={course} style={{}} desc={desc} setDesc={setDesc} />
+              <CourseCard course={course} style={{}} />
             </div>
           ))}
         </ReactSortable>
+        {moreResults && <div className="text-center text-primary text-em mt-2 mb-4">More results are hidden</div>}
       </div>
     </Container>
   );

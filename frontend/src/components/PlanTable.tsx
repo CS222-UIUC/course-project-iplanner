@@ -22,12 +22,12 @@ function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: n
 function getColumnCredits(coursePlan: Course[][], sem: number): number {
   let credits: number = 0;
   coursePlan[sem].forEach((course) => {
-    credits += course.credit[0];
+    credits += course.credit ? course.credit[0] : 3; // TODO: fix missing credit issue
   });
   return credits;
 }
 
-function PlanTable({desc, setDesc}: {desc: string, setDesc: Function}) {
+function PlanTable() {
   const { plan: coursePlan, setPlan: setCoursePlan } = useContext(PlanCtx);
 
   // if allCourses list is reloaded, restart planning
@@ -99,7 +99,7 @@ function PlanTable({desc, setDesc}: {desc: string, setDesc: Function}) {
               <ReactSortable list={coursePlan[0]} setList={setCoursePlanAtSem(setCoursePlan, 0)}
                 group="courses" swapThreshold={1.5}>
                 {coursePlan[0]?.map((course) => (
-                  <CourseCard key={course.id} course={course} desc={desc} setDesc={setDesc} compact />
+                  <CourseCard key={course.id} course={course} compact />
                 ))}
               </ReactSortable>
             </Col>
@@ -124,7 +124,7 @@ function PlanTable({desc, setDesc}: {desc: string, setDesc: Function}) {
                     <ReactSortable list={coursePlan[semIdx]} setList={setCoursePlanAtSem(setCoursePlan, semIdx)}
                       group="courses" swapThreshold={1.5}>
                       {coursePlan[semIdx]?.map((course) => (
-                        <CourseCard key={course.id} course={course} style={{ aspectRatio: "1/0.8" }} desc={desc} setDesc={setDesc}/>
+                        <CourseCard key={course.id} course={course} style={{ aspectRatio: "1/0.8" }} />
                       ))}
                     </ReactSortable>
                   </Col>
