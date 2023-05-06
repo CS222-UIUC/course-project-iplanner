@@ -98,9 +98,8 @@ function App() {
                     { descId === "" ? "Select a course to view its description." :
                       (
                         <div>
-                          { allCourses[descId].title + " | Credits: " + allCourses[descId].credit }
-                          <br />
-                          { allCourses[descId].description }
+                          <div dangerouslySetInnerHTML={{ __html: allCourses[descId].title + " | Credits: " + allCourses[descId].credit }}></div>
+                          <div dangerouslySetInnerHTML={{ __html: allCourses[descId].description }}></div>
                         </div>
                       )
                     }

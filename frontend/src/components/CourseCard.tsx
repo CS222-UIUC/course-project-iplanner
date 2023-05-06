@@ -104,8 +104,7 @@ function CourseCard({ course, style, compact }: { course: Course, style?: CSSPro
           <div className="h6">
             {`${course.subject} ${course.number}`}
           </div>
-          <div className="small">
-            {course.title}
+          <div className="small" dangerouslySetInnerHTML={{ __html: course.title }}>
           </div>
         </Card.Body>
         <div style={{ position: "absolute", bottom: "10px", right: "10px" }}>
