@@ -82,7 +82,6 @@ export default function LoginForm() {
     let xhr = new XMLHttpRequest();
     xhr.onload = (event: ProgressEvent<EventTarget>) => {
       if (xhr.status >= 200 && xhr.status < 400) {
-        console.log(xhr.responseText);
         const plan = JSON.parse(xhr.responseText);
         setCoursePlan(strArrayToPlan(plan));
         setLoadMessage("Plan loaded!");
