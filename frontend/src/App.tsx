@@ -25,17 +25,21 @@ export interface Course {
   subseq: string[],
   pattern: Pattern,
   description: string
-}
+};
 
 interface CardCtxType {
   cardStates: Record<string, CardState>,
   cardDispatch: Dispatch<CardAction>
 };
 
-export const NUM_SEMESTERS = 8;
+export const NUM_SEMESTERS = 9;
 interface CoursePlanType {
   plan: Course[][],
   setPlan: Dispatch<SetStateAction<Course[][]>>
+};
+interface DescriptionType {
+  id: string,
+  setId: Dispatch<SetStateAction<string>>
 };
 
 const emptyCardCtxType: CardCtxType = {
@@ -45,12 +49,14 @@ const emptyCardCtxType: CardCtxType = {
 export const CardCtx = createContext(emptyCardCtxType);
 export const AppCtx = createContext<Record<string, Course>>({});
 export const PlanCtx = createContext<CoursePlanType>({ plan: [], setPlan: (arg: SetStateAction<Course[][]>) => { } });
+export const DescCtx = createContext<DescriptionType>({ id: "", setId: (arg: SetStateAction<string>) => { } });
 
 function App() {
   const [cardStates, cardDispatch] = useReducer(cardReducer, {});
   const [allCourses, setAllCourses] = useState<Record<string, Course>>({});
   const [description, setDescription] = useState("");
   const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
+  const [descId, setDescId] = useState("");
 
   // Execute on mount
   useEffect(() => {
@@ -59,11 +65,11 @@ function App() {
     let xhr = new XMLHttpRequest();
 
     xhr.onload = function(event: ProgressEvent<EventTarget>)  {
-      console.log("Finished loading data!");
-      setAllCourses(JSON.parse(this.responseText).reduce((dict: Record<string, Course>, course: Course) => {
+      const dict = JSON.parse(this.responseText).reduce((dict: Record<string, Course>, course: Course) => {
         dict[course.id] = course;
         return dict;
-      }, {}));
+      }, {});
+      setAllCourses(dict);
     };
     xhr.open('GET', 'http://localhost:1123/api/course/');
     xhr.send();
@@ -74,29 +80,40 @@ function App() {
       <AppCtx.Provider value={allCourses}>
         <CardCtx.Provider value={{ cardStates, cardDispatch }}>
           <PlanCtx.Provider value={{ plan: coursePlan, setPlan: setCoursePlan }}>
-            <Row className="mt-2">
-              <Col xs={10}>
-                <div style={{ height: "70vh" }}>
-                  <PlanTable desc={description} setDesc={setDescription} />
-                </div>
-                <div className="d-flex align-items-center">
-                  <b className="me-2">Legend:</b>
-                  <Badge className="curr me-1">Current Course</Badge>
-                  <Badge className="prereq me-1">Prerequisite</Badge>
-                  <Badge className="concur me-1">Concurrent</Badge>
-                  <Badge className="subseq me-1">Subsequent</Badge>
-                </div>
-                <div>
-                  <b>Course Description:</b> {description}
-                </div>
-              </Col>
-              <Col xs={2} style={{ height: "98vh", overflow: "hidden" }}>
-                <Stack>
-                  <LoginForm />
-                  <SearchBar desc={description} setDesc={setDescription} />
-                </Stack>
-              </Col>
-            </Row>
+            <DescCtx.Provider value={{ id: descId, setId: setDescId }}>
+              <Row className="mt-2">
+                <Col xs={10}>
+                  <div style={{ height: "70vh" }}>
+                    <PlanTable />
+                  </div>
+                  <div className="d-flex align-items-center">
+                    <b className="me-2">Legend:</b>
+                    <Badge className="curr me-1">Current Course</Badge>
+                    <Badge className="prereq me-1">Prerequisite</Badge>
+                    <Badge className="concur me-1">Concurrent</Badge>
+                    <Badge className="subseq me-1">Subsequent</Badge>
+                  </div>
+                  <div>
+                    <b>Course Description: </b>
+                    { descId === "" ? "Select a course to view its description." :
+                      (
+                        <div>
+                          { allCourses[descId].title + " | Credits: " + allCourses[descId].credit }
+                          <br />
+                          { allCourses[descId].description }
+                        </div>
+                      )
+                    }
+                  </div>
+                </Col>
+                <Col xs={2} style={{ height: "98vh", overflow: "hidden" }}>
+                  <Stack>
+                    <LoginForm />
+                    <SearchBar />
+                  </Stack>
+                </Col>
+              </Row>
+            </DescCtx.Provider>
           </PlanCtx.Provider>
         </CardCtx.Provider>
       </AppCtx.Provider>

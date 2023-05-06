@@ -36,4 +36,6 @@ public class CourseDTO {
     private List<String> semester;
 
     private String pattern;
+
+    private String description;
 }

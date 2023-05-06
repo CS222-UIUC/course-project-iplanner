@@ -83,6 +83,7 @@ public class ServiceCSVtoJSON {
             itemNode.put("subject", subject);
             itemNode.put("number", number);
             itemNode.put("title", row.get("Name"));
+            itemNode.put("description", row.get("Description"));
             // itemNode.put("credit", row.get("Credit Hours"));
             ArrayNode credit = objectMapper.createArrayNode();
             ArrayNode same = objectMapper.createArrayNode();

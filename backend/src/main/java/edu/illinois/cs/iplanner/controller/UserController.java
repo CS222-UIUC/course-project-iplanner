@@ -72,6 +72,11 @@ public class UserController {
         SaveDTO save = saveDAO.findByUser(userId);
         if (save != null) {
             save.setPlan(plan);
+        } else {
+            save = new SaveDTO();
+            save.setUser(userId);
+            save.setPlan(plan);
         }
+        saveDAO.save(save);
     }
 }

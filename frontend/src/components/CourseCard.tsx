@@ -1,4 +1,4 @@
-import { CardCtx, Course, AppCtx } from "../App";
+import { CardCtx, Course, AppCtx, DescCtx } from "../App";
 import "./CourseCard.css";
 import { memo, useRef } from 'react';
 import Card from 'react-bootstrap/Card';
@@ -7,36 +7,21 @@ import { ExclamationTriangle, Search, XSquare } from 'react-bootstrap-icons';
 import useCardActions from "../utils/CardActions";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
-function CourseCard({ course, style, desc, setDesc }: { course: Course, style: CSSProperties, desc: string, setDesc: Function }) {
+function CourseCard({ course, style, compact }: { course: Course, style?: CSSProperties, compact?: boolean }) {
   const relHighlighted = useRef<string[]>([]);
   const { cardStates } = useContext(CardCtx);
   const allCourses = useContext(AppCtx);
   const { setRelation, clearRelation } = useCardActions();
 
+  const { id: descId, setId: setDescId } = useContext(DescCtx);
   const description = (event: MouseEvent) => {
-    setDesc((course.title + " | Credits: " + course.credit + " | " + course.description));
+    setDescId(course.id);
   };
 
   // Use allCourses to determine relations. prereq|concur|equiv are provided.
   // Calculate prerequisite chain (prechn). Also set the current hovered course
   // to "curr". Use setRelation(course_id, relation) to set the relations.
   const calcRelations = (event: MouseEvent) => {
-    let prechn: string[][] = [];
-    const queue = [[course.id]];
-    while (queue.length !== 0) {
-      const cIdArr = queue.shift()!;
-      for (const cId of cIdArr) {
-        const cCourse = allCourses[cId];
-        for (const Ids of cCourse.prereq) {
-          queue.push(Ids);
-          for (const itr of Ids) {
-            setRelation(itr, "prechn");
-            relHighlighted.current.push(itr);
-          }
-          prechn.push(Ids);
-        }
-      }
-    }
     course.equiv?.forEach((itr) => {
       setRelation(itr, "equiv");
       relHighlighted.current.push(itr);
@@ -66,16 +51,15 @@ function CourseCard({ course, style, desc, setDesc }: { course: Course, style: C
   };
 
   const missingTooltip = (courseId: string) => {
-    console.log(courseId, cardStates[courseId].missing);
     return (
       <Tooltip>
         {
-          cardStates[courseId].missing?.reduce((msg: string, courseList: string[], listIndex: number) => {
-            const courseListMsg = courseList.reduce((listMsg: string, courseId: string, index: number) => {
+          cardStates[courseId].missing?.reduce((msg: string, prereqList: string[], listIndex: number) => {
+            const courseListMsg = prereqList.reduce((listMsg: string, courseId: string, index: number) => {
               const course = allCourses[courseId];
               return listMsg + (index == 0 ? '' : '/') + `${course.subject} ${course.number}`;
-            });
-            return msg + (listIndex == 0 ? '' : ', ') + courseListMsg;
+            }, prereqList.length > 1 ? "One of " : "");
+            return msg + (listIndex == 0 ? '' : '; ') + courseListMsg;
           }, "Missing requirement(s): ")
         }
       </Tooltip>
@@ -96,6 +80,19 @@ function CourseCard({ course, style, desc, setDesc }: { course: Course, style: C
       <Tooltip>
         {message}
       </Tooltip>
+    )
+  }
+
+  if (compact) {
+    return (
+      <Card key={course.id} className={"shadow fs-6 h-100 " + cardStates[course.id]?.relation?.toLowerCase()}
+            onMouseEnter={calcRelations} onMouseLeave={clearRelations} onClick={description}>
+        <Card.Body>
+          <div className="small">
+            {`${course.subject} ${course.number}`}
+          </div>
+        </Card.Body>
+      </Card>
     )
   }
 
@@ -123,7 +120,7 @@ function CourseCard({ course, style, desc, setDesc }: { course: Course, style: C
           {
             cardStates[course.id]?.missing?.length > 0 ?
               (
-                <OverlayTrigger overlay={missingTooltip(course.id)}>
+                <OverlayTrigger overlay={missingTooltip(course.id)} placement="bottom">
                   <XSquare className="text-danger" />
                 </OverlayTrigger>
               ) :

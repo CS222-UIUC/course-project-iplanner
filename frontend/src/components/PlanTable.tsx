@@ -22,12 +22,12 @@ function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: n
 function getColumnCredits(coursePlan: Course[][], sem: number): number {
   let credits: number = 0;
   coursePlan[sem].forEach((course) => {
-    credits += course.credit[0];
+    credits += course.credit ? course.credit[0] : 3; // TODO: fix missing credit issue
   });
   return credits;
 }
 
-function PlanTable({desc, setDesc}: {desc: string, setDesc: Function}) {
+function PlanTable() {
   const { plan: coursePlan, setPlan: setCoursePlan } = useContext(PlanCtx);
 
   // if allCourses list is reloaded, restart planning
@@ -45,16 +45,15 @@ function PlanTable({desc, setDesc}: {desc: string, setDesc: Function}) {
         let missingCourses: string[][] = [];
         course.concur.forEach((concurList) => { // For each concurrent course list
           if (!planUpToSem.some((semester: Course[]) => semester.some((c: Course) => concurList.includes(c.id)))) {
-            concurList.forEach(itr => {missingCourses.push(concurList);});
+            missingCourses.push(concurList);
           }
         });
         course.prereq.forEach((prereqList) => {
           if (!planUpToSem.slice(0, -1).some((semester: Course[]) => semester.some((c: Course) => prereqList.includes(c.id)))) {
-            prereqList.forEach(itr => { missingCourses.push(prereqList);});
+            missingCourses.push(prereqList);
           }
         });
         setMissing(course.id, missingCourses);
-        console.log(course.id, missingCourses)
       })
     });
 
@@ -93,10 +92,24 @@ function PlanTable({desc, setDesc}: {desc: string, setDesc: Function}) {
   return (
     <Container fluid className="h-100">
       <Row className="h-100">
+        <Col className="border-end border-2 h-100" xs={1}>
+          <Row className="justify-content-center align-items-center h5">Proficiency</Row>
+          <Row className="h-100">
+            <Col className="ps-0 pe-0 pt-0 pb-0">
+              <ReactSortable list={coursePlan[0]} setList={setCoursePlanAtSem(setCoursePlan, 0)}
+                group="courses" swapThreshold={1.5}>
+                {coursePlan[0]?.map((course) => (
+                  <CourseCard key={course.id} course={course} compact />
+                ))}
+              </ReactSortable>
+            </Col>
+          </Row>
+        </Col>
+
         {YEAR_LABELS.map((yearLabel, yearIdx) => {
-          const semIdxs = [yearIdx * 2, yearIdx * 2 + 1];
+          const semIdxs = [yearIdx * 2 + 1, yearIdx * 2 + 2];
           return (
-            <Col key={yearLabel + yearIdx} className="border-end border-2 h-100">
+            <Col key={yearLabel + "yr,idx" + yearIdx} className="border-end border-2 h-100">
               <Row className="justify-content-center align-items-center h5">{yearLabel}</Row>
               <Row className="justify-content-center align-items-center h6 text-center">
                 {semIdxs.map((semIdx) => (
@@ -107,11 +120,11 @@ function PlanTable({desc, setDesc}: {desc: string, setDesc: Function}) {
               </Row>
               <Row className="h-100">
                 {semIdxs.map((semIdx) => (
-                  <Col key={semIdx} className="ps-0 pe-0 pt-0 pb-0">
+                  <Col key={"sem-" + semIdx} className="ps-0 pe-0 pt-0 pb-0">
                     <ReactSortable list={coursePlan[semIdx]} setList={setCoursePlanAtSem(setCoursePlan, semIdx)}
                       group="courses" swapThreshold={1.5}>
                       {coursePlan[semIdx]?.map((course) => (
-                        <CourseCard key={course.id} course={course} style={{ aspectRatio: "1/0.8" }} desc={desc} setDesc={setDesc}/>
+                        <CourseCard key={course.id} course={course} style={{ aspectRatio: "1/0.8" }} />
                       ))}
                     </ReactSortable>
                   </Col>

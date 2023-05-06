@@ -75,6 +75,7 @@ public class DataLoadService {
                 ArrayNode jsonNodes = serviceCSVtoJSON.parse(file.getPath());
                 // Converting Json to CourseDTOs
                 for (JsonNode jsonNode : jsonNodes) {
+                    String description = jsonNode.get("description").asText();
                     JsonNode prereqs = jsonNode.get("prereq");
                     JsonNode concurs = jsonNode.get("concur");
                     JsonNode equivs = jsonNode.get("equiv");
@@ -118,8 +119,9 @@ public class DataLoadService {
                         course.setCredit(credit);
                         currSemester.add(file.getName().substring(0,7));
                         course.setSemester(currSemester);
+                        course.setDescription(description);
                         // update course
-                        courses.removeIf(c ->(c.getId().equals(course.getId())));
+                        courses.removeIf(c -> (c.getId().equals(course.getId())));
                         courses.add(course);
                     // else, we create a new courseDTO object
                     } else {
@@ -134,6 +136,7 @@ public class DataLoadService {
                         course.setConcur(concur);
                         course.setEquiv(equiv);
                         course.setSemester(semester);
+                        course.setDescription(description);
                         courses.add(course);
                         hashtable.put(subjAndNum, objectId.toString());
                     }
