@@ -48,9 +48,12 @@ public class CourseController {
         //get courses from the most recent 5 years
         Month now = LocalDateTime.now(ZoneId.of("America/Chicago")).getMonth();
         int fiveYearAgo = LocalDateTime.now(ZoneId.of("America/Chicago")).getYear() - 4;
-        if (now.compareTo(Month.APRIL) >= 0 && now.compareTo(Month.NOVEMBER) <= 0) {
+        if (now.compareTo(Month.APRIL) >= 0 && now.compareTo(Month.NOVEMBER) < 0) {
             return getAllCourses(Integer.toString(fiveYearAgo) + "-fa");
         } else {
+            if (now.compareTo(Month.NOVEMBER) >= 0) {
+                fiveYearAgo++;
+            }
             return getAllCourses(Integer.toString(fiveYearAgo) + "-sp");
         }
     }
