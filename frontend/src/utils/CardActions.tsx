@@ -9,14 +9,14 @@ export type Pattern = "fa_only" | "sp_only" | "not_recent" | "none";
 export interface CardState {
   relation: Relation, // if this course has a relation to / is the hovered course
   searched: boolean, // if this course matches the search input
-  missing: Array<string>, // missing prereqs/concur courses id
+  missing: string[][], // missing prereqs/concur courses id
   pattern: Pattern, // if the course is against the pattern in course.pattern
 }
 
 export interface CardAction {
   id: string,
   type: string,
-  missing?: Array<String>, // optional arg for missing prereq/concur chain
+  missing?: string[][], // optional arg for missing prereq/concur chain
   relation?: Relation,
   pattern?: Pattern,
 }
@@ -86,7 +86,7 @@ function useCardActions() {
       type: "RELATION_CLEAR"
     })
   }
-  const setMissing = (id: string, missing: Array<String>) => {
+  const setMissing = (id: string, missing: string[][]) => {
     cardDispatch({
       id,
       type: "MISSING_SET",

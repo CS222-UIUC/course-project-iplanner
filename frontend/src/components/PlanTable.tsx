@@ -1,13 +1,12 @@
 import { SetStateAction, memo, useContext, useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { ReactSortable } from "react-sortablejs";
-import { Course, AppCtx } from "../App";
+import { Course, AppCtx, PlanCtx, NUM_SEMESTERS } from "../App";
 import CourseCard from "./CourseCard";
 import useCardActions from "../utils/CardActions";
 import { Pattern } from "../utils/CardActions";
 import "./Description.css";
 
-const NUM_SEMESTERS = 8;
 type Dispatch<A> = (value: A) => void;
 
 function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: number): Dispatch<Course[]> {
@@ -23,20 +22,16 @@ function setCoursePlanAtSem(setFcn: Dispatch<SetStateAction<Course[][]>>, idx: n
 function getColumnCredits(coursePlan: Course[][], sem: number): number {
   let credits: number = 0;
   coursePlan[sem].forEach((course) => {
-    credits += course.credit;
+    credits += course.credit[0];
   });
   return credits;
 }
 
-function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
-  const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
+function PlanTable({desc, setDesc}: {desc: string, setDesc: Function}) {
+  const { plan: coursePlan, setPlan: setCoursePlan } = useContext(PlanCtx);
 
   // if allCourses list is reloaded, restart planning
-  // TODO: change to "reload plan" instead of wiping the plan
   const allCourses = useContext(AppCtx);
-  useEffect(() => {
-    setCoursePlan(new Array(NUM_SEMESTERS).fill([]));
-  }, [allCourses]);
 
   const { setMissing } = useCardActions();
   const { setPattern } = useCardActions();
@@ -47,19 +42,19 @@ function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
     coursePlan.forEach((sem) => {
       planUpToSem.push(sem);
       sem.forEach((course) => {
-        let missingCourses: string[] = [];
-        course.concur.forEach((concur) => {
-          if (!planUpToSem.some((semester: Course[]) => semester.some((c: Course) => concur.includes(c.id)))) {
-            //if (!planUpToSem.some((semester: Course[]) => semester.some((c: Course) => concur.some((itr: string) => c.id === itr)))) {
-            concur.forEach(itr => {missingCourses.push(itr);});
+        let missingCourses: string[][] = [];
+        course.concur.forEach((concurList) => { // For each concurrent course list
+          if (!planUpToSem.some((semester: Course[]) => semester.some((c: Course) => concurList.includes(c.id)))) {
+            concurList.forEach(itr => {missingCourses.push(concurList);});
           }
         });
-        course.prereq.forEach((prereq) => {
-          if (!planUpToSem.slice(0, -1).some((semester: Course[]) => semester.some((c: Course) => prereq.includes(c.id)))) {
-            prereq.forEach(itr => { missingCourses.push(itr);});
+        course.prereq.forEach((prereqList) => {
+          if (!planUpToSem.slice(0, -1).some((semester: Course[]) => semester.some((c: Course) => prereqList.includes(c.id)))) {
+            prereqList.forEach(itr => { missingCourses.push(prereqList);});
           }
         });
         setMissing(course.id, missingCourses);
+        console.log(course.id, missingCourses)
       })
     });
 
@@ -96,12 +91,12 @@ function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
 
   const YEAR_LABELS = ["Freshman", "Sophomore", "Junior", "Senior"];
   return (
-    <Container fluid>
-      <Row>
+    <Container fluid className="h-100">
+      <Row className="h-100">
         {YEAR_LABELS.map((yearLabel, yearIdx) => {
           const semIdxs = [yearIdx * 2, yearIdx * 2 + 1];
           return (
-            <Col key={yearLabel + yearIdx} className="border-end border-2">
+            <Col key={yearLabel + yearIdx} className="border-end border-2 h-100">
               <Row className="justify-content-center align-items-center h5">{yearLabel}</Row>
               <Row className="justify-content-center align-items-center h6 text-center">
                 {semIdxs.map((semIdx) => (
@@ -110,7 +105,7 @@ function PlanTable({desc, setDesc}:{desc: string, setDesc: Function}) {
                   </Col>
                 ))}
               </Row>
-              <Row>
+              <Row className="h-100">
                 {semIdxs.map((semIdx) => (
                   <Col key={semIdx} className="ps-0 pe-0 pt-0 pb-0">
                     <ReactSortable list={coursePlan[semIdx]} setList={setCoursePlanAtSem(setCoursePlan, semIdx)}

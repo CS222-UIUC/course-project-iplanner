@@ -37,29 +37,22 @@ function CourseCard({ course, style, desc, setDesc }: { course: Course, style: C
         }
       }
     }
-    for (const itr of course.equiv) {
+    course.equiv?.forEach((itr) => {
       setRelation(itr, "equiv");
       relHighlighted.current.push(itr);
-    }
-    for (const itrarr of course.concur) {
-      for (const itr of itrarr) {
-        setRelation(itr, "concur");
-        relHighlighted.current.push(itr);
-      }
-    }
-    for (const itrarr of course.prereq) {
-      for (const itr of itrarr) {
-        setRelation(itr, "prereq");
-      }
-    }
-    for (const itr of course.equiv) {
-      setRelation(itr, "equiv");
+    });
+    course.prereq?.forEach((prereqList) => prereqList.forEach((itr) => {
+      setRelation(itr, "prereq");
       relHighlighted.current.push(itr);
-    }
-    for (const itr of course.subseq) {
+    }));
+    course.concur?.forEach((subseqList) => subseqList.forEach((itr) => {
+      setRelation(itr, "concur");
+      relHighlighted.current.push(itr);
+    }));
+    course.subseq?.forEach((itr) => {
       setRelation(itr, "subseq");
       relHighlighted.current.push(itr);
-    }
+    });
     setRelation(course.id, "curr");
     relHighlighted.current.push(course.id);
   };
@@ -73,12 +66,16 @@ function CourseCard({ course, style, desc, setDesc }: { course: Course, style: C
   };
 
   const missingTooltip = (courseId: string) => {
+    console.log(courseId, cardStates[courseId].missing);
     return (
       <Tooltip>
         {
-          cardStates[courseId].missing?.reduce((msg: string, courseId: string) => {
-            const course = allCourses[courseId];
-            return course ? msg + `${course.subject} ${course.number} ` : msg;
+          cardStates[courseId].missing?.reduce((msg: string, courseList: string[], listIndex: number) => {
+            const courseListMsg = courseList.reduce((listMsg: string, courseId: string, index: number) => {
+              const course = allCourses[courseId];
+              return listMsg + (index == 0 ? '' : '/') + `${course.subject} ${course.number}`;
+            });
+            return msg + (listIndex == 0 ? '' : ', ') + courseListMsg;
           }, "Missing requirement(s): ")
         }
       </Tooltip>

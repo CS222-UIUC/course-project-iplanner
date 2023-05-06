@@ -1,4 +1,4 @@
-import { createContext, Dispatch, useEffect, useReducer, useState, Profiler } from 'react';
+import { createContext, Dispatch, useEffect, useReducer, useState, SetStateAction } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -8,9 +8,6 @@ import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 import PlanTable from './components/PlanTable';
 import { CardAction, cardReducer, CardState, Pattern } from './utils/CardActions';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
 
 // TODO: FE testing only, change to api call in useEffect onMount function
 import data from "./data/20230307_api_test_courses.json";
@@ -21,7 +18,7 @@ export interface Course {
   subject: string,
   number: string,
   title: string,
-  credit: number,
+  credit: number[],
   equiv: string[],
   concur: string[][],
   prereq: string[][],
@@ -35,21 +32,30 @@ interface CardCtxType {
   cardDispatch: Dispatch<CardAction>
 };
 
+export const NUM_SEMESTERS = 8;
+interface CoursePlanType {
+  plan: Course[][],
+  setPlan: Dispatch<SetStateAction<Course[][]>>
+};
+
 const emptyCardCtxType: CardCtxType = {
   cardStates: {},
   cardDispatch: (arg: CardAction) => { }
 };
 export const CardCtx = createContext(emptyCardCtxType);
-
 export const AppCtx = createContext<Record<string, Course>>({});
+export const PlanCtx = createContext<CoursePlanType>({ plan: [], setPlan: (arg: SetStateAction<Course[][]>) => { } });
 
 function App() {
   const [cardStates, cardDispatch] = useReducer(cardReducer, {});
   const [allCourses, setAllCourses] = useState<Record<string, Course>>({});
   const [description, setDescription] = useState("");
+  const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
 
   // Execute on mount
   useEffect(() => {
+    setCoursePlan(new Array(NUM_SEMESTERS).fill([]));
+
     let xhr = new XMLHttpRequest();
 
     xhr.onload = function(event: ProgressEvent<EventTarget>)  {
@@ -67,27 +73,31 @@ function App() {
     <Container fluid>
       <AppCtx.Provider value={allCourses}>
         <CardCtx.Provider value={{ cardStates, cardDispatch }}>
-          <Row className="mt-2">
-            <Col xs={10}>
-              <div style={{ height: "70vh" }}>
-                <PlanTable desc={description} setDesc={setDescription} />
-              </div>
-              <div className="d-flex align-items-center">
-                <b className="me-2">Legend:</b>
-                <Badge className="curr me-1">Current Course</Badge>
-                <Badge className="prereq me-1">Prerequisite</Badge>
-                <Badge className="concur me-1">Concurrent</Badge>
-                <Badge className="subseq me-1">Subsequent</Badge>
-              </div>
-              <div>
-                <b>Course Description:</b> {description}
-              </div>
-            </Col>
-            <Col xs={2}>
-                <LoginForm />
-                <SearchBar desc={description} setDesc={setDescription} />
-            </Col>
-          </Row>
+          <PlanCtx.Provider value={{ plan: coursePlan, setPlan: setCoursePlan }}>
+            <Row className="mt-2">
+              <Col xs={10}>
+                <div style={{ height: "70vh" }}>
+                  <PlanTable desc={description} setDesc={setDescription} />
+                </div>
+                <div className="d-flex align-items-center">
+                  <b className="me-2">Legend:</b>
+                  <Badge className="curr me-1">Current Course</Badge>
+                  <Badge className="prereq me-1">Prerequisite</Badge>
+                  <Badge className="concur me-1">Concurrent</Badge>
+                  <Badge className="subseq me-1">Subsequent</Badge>
+                </div>
+                <div>
+                  <b>Course Description:</b> {description}
+                </div>
+              </Col>
+              <Col xs={2} style={{ height: "98vh", overflow: "hidden" }}>
+                <Stack>
+                  <LoginForm />
+                  <SearchBar desc={description} setDesc={setDescription} />
+                </Stack>
+              </Col>
+            </Row>
+          </PlanCtx.Provider>
         </CardCtx.Provider>
       </AppCtx.Provider>
     </Container>
