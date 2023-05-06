@@ -124,7 +124,7 @@ function PlanTable() {
                     <ReactSortable list={coursePlan[semIdx]} setList={setCoursePlanAtSem(setCoursePlan, semIdx)}
                       group="courses" swapThreshold={1.5}>
                       {coursePlan[semIdx]?.map((course) => (
-                        <CourseCard key={course.id} course={course} style={{ aspectRatio: "1/0.8" }} />
+                        <CourseCard key={course.id} course={course} style={{ aspectRatio: "1/0.9" }} />
                       ))}
                     </ReactSortable>
                   </Col>
