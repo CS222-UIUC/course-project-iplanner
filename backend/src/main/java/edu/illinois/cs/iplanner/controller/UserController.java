@@ -57,11 +57,11 @@ public class UserController {
     }
 
     @GetMapping("/plan")
-    public List<List<String>> getUserPlan(HttpSession session) {
+    public List<List<String>> getUserPlan(HttpSession session, HttpServletResponse response) throws IOException {
         String userId = userSessionService.userId(session);
         SaveDTO save = saveDAO.findByUser(userId);
         if (save == null) {
-            return new ArrayList<>();
+            return null;
         }
         return save.getPlan();
     }

@@ -56,11 +56,16 @@ public class DataLoadService {
     }
 
     public List<CourseDTO> convertJsonObjToCourseDTOs() throws Exception {
+        Map<String, String> hashtable = new HashMap<>();
+        List<CourseDTO> currCourses = courseDAO.findAll();
+        
+        for (CourseDTO course : currCourses) {
+            hashtable.put(course.getSubject() + " " + course.getNumber(), course.getId());
+        }
+
         String folderPath = "./backend/data/";
         File folder = new File(folderPath);
         File[] files = folder.listFiles();
-
-        Map<String, String> hashtable = new HashMap<>();
         List<CourseDTO> courses = new ArrayList<CourseDTO>();
 
         // Iterate through all datasets
