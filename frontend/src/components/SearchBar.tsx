@@ -46,7 +46,6 @@ function SearchBar({desc, setDesc}:{desc: string, setDesc: Function}) {
       );
     };
 
-    console.log("Started searching");
     let available: Course[] = [];
     let more = false; // If more results are hidden
     let highlight: string[] = [];

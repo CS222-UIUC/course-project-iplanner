@@ -32,7 +32,7 @@ interface CardCtxType {
   cardDispatch: Dispatch<CardAction>
 };
 
-export const NUM_SEMESTERS = 8;
+export const NUM_SEMESTERS = 9;
 interface CoursePlanType {
   plan: Course[][],
   setPlan: Dispatch<SetStateAction<Course[][]>>
@@ -60,10 +60,12 @@ function App() {
 
     xhr.onload = function(event: ProgressEvent<EventTarget>)  {
       console.log("Finished loading data!");
-      setAllCourses(JSON.parse(this.responseText).reduce((dict: Record<string, Course>, course: Course) => {
+      const dict = JSON.parse(this.responseText).reduce((dict: Record<string, Course>, course: Course) => {
         dict[course.id] = course;
         return dict;
-      }, {}));
+      }, {});
+      console.log(dict);
+      setAllCourses(dict);
     };
     xhr.open('GET', 'http://localhost:1123/api/course/');
     xhr.send();
