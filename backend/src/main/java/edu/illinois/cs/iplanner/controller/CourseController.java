@@ -45,7 +45,7 @@ public class CourseController {
     }
     
     @RequestMapping("/")
-    public List<CourseViewVO> getAllCourses() {
+    public List<CourseDTO> getAllCourses() {
         //get courses from the most recent 5 years
         Month now = LocalDateTime.now(ZoneId.of("America/Chicago")).getMonth();
         int fiveYearAgo = LocalDateTime.now(ZoneId.of("America/Chicago")).getYear() - 4;
@@ -57,9 +57,9 @@ public class CourseController {
     }
 
     @RequestMapping("/{semester}")
-    public List<CourseViewVO> getAllCourses(@PathVariable(name = "semester") String semester) {
+    public List<CourseDTO> getAllCourses(@PathVariable(name = "semester") String semester) {
         List<CourseDTO> courses = courseDAO.findAll();
-        List<CourseViewVO> allCourses = new ArrayList<CourseViewVO>();
+        List<CourseDTO> allCourses = new ArrayList<CourseDTO>();
         for (CourseDTO course : courses) {
             boolean add = false;
             List<String> courseSemester = course.getSemester();
@@ -78,7 +78,7 @@ public class CourseController {
                 }
             }
             if (add) {
-                allCourses.add(new CourseViewVO(course));
+                allCourses.add(course);
             }
         }
         return allCourses;
