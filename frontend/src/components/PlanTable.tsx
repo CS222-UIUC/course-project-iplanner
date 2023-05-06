@@ -62,7 +62,7 @@ function PlanTable() {
       sem.forEach((course) => {
         const pattern = course.pattern;
         if (pattern === "fa_only") {
-          if (semIdx % 2 !== 0) {
+          if (semIdx % 2 !== 1) {
             setPattern(course.id, pattern as Pattern);
           }
           else {
@@ -70,7 +70,7 @@ function PlanTable() {
           }
         }
         else if (pattern === "sp_only") {
-          if (semIdx % 2 !== 1) {
+          if (semIdx % 2 !== 0) {
             setPattern(course.id, pattern as Pattern);
           }
           else {

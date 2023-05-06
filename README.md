@@ -1,5 +1,34 @@
 # iPlanner
 
+## What is iPlanner?
+
+A 4-year planning webapp for UIUC students that automatically informs users of credit count, missing prerequisites or corequisites, all in an intuitive graphical interface. \Wohoo/
+
+## Team Members & Role
+
+- Jizheng (Daniel) He: Coordinator and architect; frontend development.
+- Anant Matta: Frontend development.
+- Encheng (Kevin) Xie: Backend development/data processing.
+- Zihao (Edward) Huang: Backend development/server routing & database management.
+
+## Technical Architecture & File system
+
+![Architecture](architecture.png)
+
+- `backend`: Springboot-based backend.
+  - `config`: Configures CORS policy for development environment.
+  - `controller`: Routers that handle frontend requests.
+  - `dao`: Data Access Objects that interact with the MongoDB database.
+  - `model`: Data Transfer Objects, datatypes of "documents" in each table.
+  - `service`: Service classes for data processing/downloading/saving and user authentication.
+  - `vo`: View Objects used for frontend-backend communications.
+- `frontend`: React-based frontend.
+  - `App.tsx`: Main entry.
+  - `components/PlanTable.tsx`: 4-year + proficiency planning table that supports dragging/dropping.
+  - `components/SearchBar.tsx`: Responsive course searching based on subject/number/title.
+  - `components/LoginForm.tsx`: Login/save/load user plans.
+  - `utils/CardActions.tsx`: Reducer-based card actions for all `components/CourseCard` UI properties.
+
 ## Backend Dev Environment Setup
 
 1. Download and install [JDK 17 Installer](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).
@@ -41,6 +70,7 @@
    yarn install
    yarn start
    ```
+4. Make sure it runs on port `3000`, or it will fail the CORS policy of the backend configuration.
 
 ## Database Setup
 
@@ -62,4 +92,8 @@
    spring.data.mongodb.database = iplanner
    ```
 3. In VSCode, reload your Java Project by "View > Command Palette" (in Windows `Ctrl+Shift+P`), search for "Java > Clean Java Language Server Workspace", hit Enter, and click "Reload and Delete" on the bottom-right pop-up.
+
+### Load in course dataset
+
+1. Access `http://localhost:1123/api/course/load-data` and wait for magic to happen! This takes around 2 minutes since there are ~9.2k courses in total.
 
