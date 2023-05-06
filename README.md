@@ -46,7 +46,7 @@
 
 **Read all instructions before you start.**
 
-### MySQL Installation
+### MongoDB Installation
 
 1. Go to [MongoDB's official website](https://www.mongodb.com/try/download/community), select "Version 6.0.4 (current)", and download the MongoDB installer.
 2. Keep everything as default in the installer.
@@ -63,8 +63,3 @@
    ```
 3. In VSCode, reload your Java Project by "View > Command Palette" (in Windows `Ctrl+Shift+P`), search for "Java > Clean Java Language Server Workspace", hit Enter, and click "Reload and Delete" on the bottom-right pop-up.
 
-### Import Database from SQL file
-
-1. Click into `iplanner.courses` in MongoDB Compass. Click "Documents > Add Data > Insert Document".
-2. Replace the contents of the pop-up input to contents from `/backend/db/20230307_api_test_courses.json`, and click "Insert".
-3. Open `IplannerApplication.java` and hit `Debug`. If everything is configured the backend should start successfully, and accessing `localhost:1123/api/course/` should show the imported data.
