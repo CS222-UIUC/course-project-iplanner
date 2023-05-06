@@ -36,6 +36,6 @@ build/
 .vscode/
 
 ### testing files ###
-/data/
+data/*
 *.json
 *.csv

@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+.none {
+  background-color: #ffffff;
+}
+
+.prereq {
+  background-color: #31df6b;
+}
+
+.curr {
+  background-color: #ff8d4b;
+}
+
+.concur {
+  background-color: #b194e8;
+}
+
+.subseq {
+  background-color: #5ab0de;
+}
+

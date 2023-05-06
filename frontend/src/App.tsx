@@ -1,28 +1,30 @@
-import { createContext, Dispatch, useEffect, useReducer, useState } from 'react';
+import { createContext, Dispatch, useEffect, useReducer, useState, SetStateAction } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import SearchBar from './components/SearchBar';
-import { Container } from 'react-bootstrap';
+import { Badge, Container, Stack } from 'react-bootstrap';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 import PlanTable from './components/PlanTable';
-import { CardAction, cardReducer, CardState } from './utils/CardActions';
+import { CardAction, cardReducer, CardState, Pattern } from './utils/CardActions';
 
 // TODO: FE testing only, change to api call in useEffect onMount function
 import data from "./data/20230307_api_test_courses.json";
+import LoginForm from './components/LoginForm';
 
 export interface Course {
   id: string,
   subject: string,
   number: string,
   title: string,
-  credit: number,
+  credit: number[],
   equiv: string[],
-  concur: string[],
-  prereq: string[],
+  concur: string[][],
+  prereq: string[][],
   subseq: string[],
-  pattern: string[]
+  pattern: Pattern,
+  description: string
 }
 
 interface CardCtxType {
@@ -30,39 +32,74 @@ interface CardCtxType {
   cardDispatch: Dispatch<CardAction>
 };
 
+export const NUM_SEMESTERS = 8;
+interface CoursePlanType {
+  plan: Course[][],
+  setPlan: Dispatch<SetStateAction<Course[][]>>
+};
+
 const emptyCardCtxType: CardCtxType = {
   cardStates: {},
   cardDispatch: (arg: CardAction) => { }
 };
 export const CardCtx = createContext(emptyCardCtxType);
-export const CourseCtx = createContext<Record<string, Course>>({});
+export const AppCtx = createContext<Record<string, Course>>({});
+export const PlanCtx = createContext<CoursePlanType>({ plan: [], setPlan: (arg: SetStateAction<Course[][]>) => { } });
 
 function App() {
   const [cardStates, cardDispatch] = useReducer(cardReducer, {});
   const [allCourses, setAllCourses] = useState<Record<string, Course>>({});
+  const [description, setDescription] = useState("");
+  const [coursePlan, setCoursePlan] = useState<Course[][]>(new Array(NUM_SEMESTERS).fill([]));
 
   // Execute on mount
   useEffect(() => {
-    setAllCourses(data.reduce((dict: Record<string, Course>, course: Course) => {
-      dict[course.id] = course;
-      return dict;
-    }, {}));
+    setCoursePlan(new Array(NUM_SEMESTERS).fill([]));
+
+    let xhr = new XMLHttpRequest();
+
+    xhr.onload = function(event: ProgressEvent<EventTarget>)  {
+      console.log("Finished loading data!");
+      setAllCourses(JSON.parse(this.responseText).reduce((dict: Record<string, Course>, course: Course) => {
+        dict[course.id] = course;
+        return dict;
+      }, {}));
+    };
+    xhr.open('GET', 'http://localhost:1123/api/course/');
+    xhr.send();
   }, []);
 
   return (
     <Container fluid>
-      <CourseCtx.Provider value={allCourses}>
+      <AppCtx.Provider value={allCourses}>
         <CardCtx.Provider value={{ cardStates, cardDispatch }}>
-          <Row className="mt-2">
-            <Col xs={10}>
-              <PlanTable />
-            </Col>
-            <Col xs={2}>
-              <SearchBar />
-            </Col>
-          </Row>
+          <PlanCtx.Provider value={{ plan: coursePlan, setPlan: setCoursePlan }}>
+            <Row className="mt-2">
+              <Col xs={10}>
+                <div style={{ height: "70vh" }}>
+                  <PlanTable desc={description} setDesc={setDescription} />
+                </div>
+                <div className="d-flex align-items-center">
+                  <b className="me-2">Legend:</b>
+                  <Badge className="curr me-1">Current Course</Badge>
+                  <Badge className="prereq me-1">Prerequisite</Badge>
+                  <Badge className="concur me-1">Concurrent</Badge>
+                  <Badge className="subseq me-1">Subsequent</Badge>
+                </div>
+                <div>
+                  <b>Course Description:</b> {description}
+                </div>
+              </Col>
+              <Col xs={2} style={{ height: "98vh", overflow: "hidden" }}>
+                <Stack>
+                  <LoginForm />
+                  <SearchBar desc={description} setDesc={setDescription} />
+                </Stack>
+              </Col>
+            </Row>
+          </PlanCtx.Provider>
         </CardCtx.Provider>
-      </CourseCtx.Provider>
+      </AppCtx.Provider>
     </Container>
   )
 }

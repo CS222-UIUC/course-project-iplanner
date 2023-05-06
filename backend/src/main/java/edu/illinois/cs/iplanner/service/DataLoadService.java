@@ -37,7 +37,7 @@ public class DataLoadService {
     // Download datasets via CSVdownloader Service
     public void downloadData() throws Exception {
         ServiceCSVdownloader serviceCSVdownloader = new ServiceCSVdownloader();
-        String output = "./backend/data/"; 
+        String output = "./backend/data/";
         Calendar calendar = Calendar.getInstance();
         // Download is based on current year. EX:  "2023 April" downloads files until "2023-fa", "2023 Nov" downloads file until "2024-sp"
         int currentYear = calendar.get(Calendar.YEAR);
@@ -106,35 +106,11 @@ public class DataLoadService {
                     if (hashtable.containsKey(subjAndNum) == true) {
                         Optional<CourseDTO> findCourse = courseDAO.findById(hashtable.get(subjAndNum));
                         CourseDTO course = findCourse.get();
-                        List<List<String>> currPrereq = course.getPrereq();
-                        List<List<String>> currConcur = course.getConcur();
-                        List<String> currEquiv = course.getEquiv();
-                        List<Integer> currCredit = course.getCredit();
                         List<String> currSemester = course.getSemester();
-                        for (List<String> subList : prereq) {
-                            if (!currPrereq.contains(subList)) {
-                                currPrereq.add(subList);
-                            }
-                        }
-                        course.setPrereq(currPrereq);
-                        for (List<String> subList : concur) {
-                            if (!currConcur.contains(subList)) {
-                                currConcur.add(subList);
-                            }
-                        }
-                        course.setConcur(currConcur);
-                        for (String elem : equiv) {
-                            if (!currEquiv.contains(elem)) {
-                                currEquiv.add(elem);
-                            }
-                        }
-                        course.setEquiv(currEquiv);
-                        for (Integer elem : credit) {
-                            if (!currCredit.contains(elem)) {
-                                currCredit.add(elem);
-                            }
-                        }
-                        course.setCredit(currCredit);
+                        course.setPrereq(prereq);
+                        course.setConcur(concur);
+                        course.setEquiv(equiv);
+                        course.setCredit(credit);
                         currSemester.add(file.getName().substring(0,7));
                         course.setSemester(currSemester);
                         // update course
@@ -200,7 +176,7 @@ public class DataLoadService {
             course.setPattern(pattern);
         }
         courseDAO.saveAll(courses);
-        
+
         return courses;
     }
 
@@ -249,7 +225,7 @@ public class DataLoadService {
         }
         return subsequentCourses;
     }
-    
+
     public String semPatternDetec(List<String> semesters) {
         Calendar calendar = Calendar.getInstance();
         int currentYear = calendar.get(Calendar.YEAR);
@@ -281,7 +257,7 @@ public class DataLoadService {
         // otherwise, there is no obvious pattern for this course
         return "none";
     }
-    
+
     public void resetDatabase() throws StreamReadException, DatabindException, IOException {
         courseDAO.deleteAll();
     }
